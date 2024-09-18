@@ -25,22 +25,16 @@ import {
 
 const components = [
   {
-    title: 'Alert Dialog',
-    href: '/docs/primitives/alert-dialog',
+    title: 'Clientes',
+    href: '/clients',
     description:
-      'A modal dialog that interrupts the user with important content and expects a response.',
+      'Cadastro e visualização de clientes',
   },
   {
-    title: 'Hover Card',
-    href: '/docs/primitives/hover-card',
+    title: 'Outro',
+    href: '/',
     description:
-      'For sighted users to preview content available behind a link.',
-  },
-  {
-    title: 'Progress',
-    href: '/docs/primitives/progress',
-    description:
-      'Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.',
+      'Outra tela aqui',
   },
 ]
 
@@ -90,15 +84,23 @@ const toggleTheme = () => {
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem v-if="user">
+            <NavigationMenuLink
+              :href="route('clients')"
+              :class="navigationMenuTriggerStyle()"
+            >
+              Clientes
+            </NavigationMenuLink>
+          </NavigationMenuItem>
+          <!-- <NavigationMenuItem v-if="user">
             <NavigationMenuTrigger>Cadastros</NavigationMenuTrigger>
             <NavigationMenuContent>
               <ul
                 class="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]"
               >
                 <li v-for="component in components" :key="component.title">
-                  <NavigationMenuLink as-child>
+                  <NavigationMenuLink>
                     <a
-                      :href="component.href"
+                      :href="route(component.href)"
                       class="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
                     >
                       <div class="text-sm font-medium leading-none">
@@ -114,7 +116,7 @@ const toggleTheme = () => {
                 </li>
               </ul>
             </NavigationMenuContent>
-          </NavigationMenuItem>
+          </NavigationMenuItem> -->
         </NavigationMenuList>
       </NavigationMenu>
 

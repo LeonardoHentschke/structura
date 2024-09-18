@@ -21,6 +21,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'phone',
+        'is_admin',
     ];
 
     /**
@@ -44,5 +45,25 @@ class User extends Authenticatable implements MustVerifyEmail
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function clientsCreated()
+    {
+        return $this->hasMany(Client::class, 'created_by');
+    }
+
+    public function clientsUpdated()
+    {
+        return $this->hasMany(Client::class, 'updated_by');
+    }
+
+    public function addressesCreated()
+    {
+        return $this->hasMany(Address::class, 'created_by');
+    }
+
+    public function addressesUpdated()
+    {
+        return $this->hasMany(Address::class, 'updated_by');
     }
 }

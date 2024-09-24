@@ -13,9 +13,10 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/profile', [ProfileController::class, 'updatePassword'])->name('profile.password');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::get('/clients', [ClientController::class, 'index'])->name('clients');
-    Route::post('/clients', [ClientController::class, 'store'])->name('clients');
 });
+
+Route::get('/clients', [ClientController::class, 'index'])->name('clients');
+Route::post('/clients', [ClientController::class, 'store'])->name('clients');
 
 Route::inertia('/', 'Home')->name('home');
 Route::inertia('/about', 'About')->name('about');

@@ -17,6 +17,7 @@ Route::middleware(['auth'])->group(function () {
 
 Route::get('/clients', [ClientController::class, 'index'])->name('clients');
 Route::post('/clients', [ClientController::class, 'store'])->name('clients');
+Route::put('/clients', [ClientController::class, 'update'])->name('clients');
 
 Route::inertia('/', 'Home')->name('home');
 Route::inertia('/about', 'About')->name('about');

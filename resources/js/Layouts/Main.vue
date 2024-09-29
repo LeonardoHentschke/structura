@@ -4,39 +4,9 @@ import { usePage } from "@inertiajs/vue3";
 import { switchTheme } from "@/theme";
 import { MoonIcon, SunIcon } from '@radix-icons/vue'
 import { Button } from '@/components/ui/button'
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-  navigationMenuTriggerStyle
-} from '@/components/ui/navigation-menu';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuLabel,
-  DropdownMenuSeparator
-} from '@/components/ui/dropdown-menu'
-
-const components = [
-  {
-    title: 'Clientes',
-    href: '/clients',
-    description:
-      'Cadastro e visualização de clientes',
-  },
-  {
-    title: 'Outro',
-    href: '/',
-    description:
-      'Outra tela aqui',
-  },
-]
+import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, navigationMenuTriggerStyle } from '@/components/ui/navigation-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 const page = usePage();
 const user = computed(() => page.props.auth.user);
@@ -56,7 +26,7 @@ const toggleTheme = () => {
   <header
     class="sticky z-40 top-0 bg-background/80 backdrop-blur-lg border-b border-border"
   >
-    <nav class="p-6 mx-auto max-w-screen-lg flex items-center justify-between">
+    <nav class="p-3 mx-auto max-w-screen-lg flex items-center justify-between">
       <NavigationMenu>
         <NavigationMenuList>
           <NavigationMenuItem v-if="!user">
@@ -91,32 +61,6 @@ const toggleTheme = () => {
               Clientes
             </NavigationMenuLink>
           </NavigationMenuItem>
-          <!-- <NavigationMenuItem v-if="user">
-            <NavigationMenuTrigger>Cadastros</NavigationMenuTrigger>
-            <NavigationMenuContent>
-              <ul
-                class="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]"
-              >
-                <li v-for="component in components" :key="component.title">
-                  <NavigationMenuLink>
-                    <a
-                      :href="route(component.href)"
-                      class="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                    >
-                      <div class="text-sm font-medium leading-none">
-                        {{ component.title }}
-                      </div>
-                      <p
-                        class="line-clamp-2 text-sm leading-snug text-muted-foreground"
-                      >
-                        {{ component.description }}
-                      </p>
-                    </a>
-                  </NavigationMenuLink>
-                </li>
-              </ul>
-            </NavigationMenuContent>
-          </NavigationMenuItem> -->
         </NavigationMenuList>
       </NavigationMenu>
 
@@ -152,16 +96,16 @@ const toggleTheme = () => {
         <div v-else class="space-x-2">
           <Button :href="route('login')">Entrar</Button>
 
-          <Button variant="secondary" :href="route('register')"
-            >Cadastrar-se</Button
-          >
+          <Button variant="secondary" :href="route('register')">
+            Cadastrar-se
+          </Button>
         </div>
-        <button
+        <Button
           @click="toggleTheme"
-          class="hover:bg-foreground/15 w-7 h-7 grid place-items-center rounded-full hover:outline outline-1 outline-foreground"
+          variant="ghost"
         >
           <component :is="isDarkMode ? SunIcon : MoonIcon" />
-        </button>
+        </Button>
       </div>
     </nav>
   </header>

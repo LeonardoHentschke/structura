@@ -86,9 +86,9 @@ const table = useVueTable({
 </script>
 
 <template>
-
-<div class="w-full">
-    <div class="flex items-center py-4">
+<div class="min-h-screen flex items-center justify-center">
+  <div class="w-full max-w-3xl">
+    <div class="flex items-center py-4 justify-center space-x-4">
       <Input
         class="max-w-sm"
         placeholder="Filtre por nome..."
@@ -178,6 +178,8 @@ const table = useVueTable({
       </div>
     </div>
   </div>
+</div>
+  
 
   <!-- <Tabs default-value="show">
     <TabsList class="grid w-full grid-cols-2">

@@ -16,6 +16,7 @@
         "vite": "^5.0"
     },
     "dependencies": {
+        "@inertiajs/inertia": "^0.11.1",
         "@inertiajs/vue3": "^1.2.0",
         "@radix-icons/vue": "^1.0.0",
         "@tanstack/vue-table": "^8.20.5",

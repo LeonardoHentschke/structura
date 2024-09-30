@@ -16,14 +16,10 @@ const form = useForm({
     password_confirmation: "",
 });
 
-const isLoading = ref(false); // Controlar o estado de carregamento
-
 const submit = () => {    
-    isLoading.value = true; // Inicia o carregamento
     form.post(route("register"), {
         onFinish: () => {
             form.reset("password", "password_confirmation");
-            isLoading.value = false; // Finaliza o carregamento
         },
     });
 };
@@ -31,33 +27,6 @@ const submit = () => {
 
 <template>
   <main class="h-full w-full flex flex-col items-center justify-center relative">
-    
-    <!-- Loader Condicional -->
-    <div v-if="isLoading" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div class="loader">
-        <div class="box box-1">
-          <div class="side-left"></div>
-          <div class="side-right"></div>
-          <div class="side-top"></div>
-        </div>
-        <div class="box box-2">
-          <div class="side-left"></div>
-          <div class="side-right"></div>
-          <div class="side-top"></div>
-        </div>
-        <div class="box box-3">
-          <div class="side-left"></div>
-          <div class="side-right"></div>
-          <div class="side-top"></div>
-        </div>
-        <div class="box box-4">
-          <div class="side-left"></div>
-          <div class="side-right"></div>
-          <div class="side-top"></div>
-        </div>
-      </div>
-    </div>
-
     <!-- Mensagens de Erro -->
     <Alert v-if="Object.keys(form.errors).length" variant="destructive" class="max-w-md shadow-sm mb-4">
       <ExclamationTriangleIcon class="w-4 h-4" />

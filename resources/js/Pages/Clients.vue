@@ -34,6 +34,7 @@ const submitForm = () => {
   });
 };
 
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import DropdownAction from '@/components/DataTableDropDown.vue'
 
@@ -95,6 +96,60 @@ const table = useVueTable({
         :model-value="table.getColumn('name')?.getFilterValue()"
         @update:model-value=" table.getColumn('name')?.setFilterValue($event)"
       />
+      <AlertDialog>
+        <AlertDialogTrigger as-child>
+          <Button class="ml-auto">
+            Adicionar novo cliente
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Novo cliente</AlertDialogTitle>
+            <AlertDialogDescription>
+              <div class="space-y-2">
+                <div class="mb-4">
+                  <Label for="name" class="block text-sm font-medium">Nome</Label>
+                  <Input
+                    v-model="form.name"
+                    id="name"
+                    type="text"
+                    placeholder="Digite o nome"
+                    required
+                  />
+                </div>
+                <div class="mb-4">
+                  <Label for="cpf" class="block text-sm font-medium">CPF</Label>
+                  <Input
+                    v-model="form.cpf"
+                    id="cpf"
+                    type="text"
+                    placeholder="Digite o CPF"
+                    required
+                  />
+                </div>
+
+                <div class="mb-4">
+                  <Label for="birth_date" class="block text-sm font-medium"
+                    >Data de Nascimento</Label
+                  >
+                  <Input
+                    v-model="form.birth_date"
+                    id="birth_date"
+                    type="date"
+                    required
+                  />
+                </div>
+
+                
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction>Continue</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
       <DropdownMenu>
         <DropdownMenuTrigger as-child>
           <Button variant="outline" class="ml-auto">

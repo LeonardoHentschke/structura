@@ -16,18 +16,18 @@ function copy(id) {
   <DropdownMenu>
     <DropdownMenuTrigger as-child>
       <Button variant="ghost" class="w-8 h-8 p-0">
-        <span class="sr-only">Open menu</span>
+        <span class="sr-only">Abrir menu</span>
         <DotsHorizontalIcon class="w-4 h-4" />
       </Button>
     </DropdownMenuTrigger>
     <DropdownMenuContent>
-      <DropdownMenuLabel>Actions</DropdownMenuLabel>
+      <DropdownMenuLabel>Ações</DropdownMenuLabel>
       <DropdownMenuItem @click="copy(props.data.id)">
-        Copy payment ID
+        Copiar ID
       </DropdownMenuItem>
       <DropdownMenuSeparator />
-      <DropdownMenuItem>View customer</DropdownMenuItem>
-      <DropdownMenuItem>View payment details</DropdownMenuItem>
+      <DropdownMenuItem>Ver cliente</DropdownMenuItem>
+      <DropdownMenuItem>Ver endereços</DropdownMenuItem>
     </DropdownMenuContent>
   </DropdownMenu>
 </template>

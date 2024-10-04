@@ -25,10 +25,6 @@ createInertiaApp({
             .component("Link", Link)
             .mount(el);
     },
-    progress: {
-        color: "#facc15",
-        showSpinner: true,
-    },
 });
 
 setThemeOnLoad()

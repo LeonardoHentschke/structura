@@ -16,8 +16,9 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::get('/clients', [ClientController::class, 'index'])->name('clients');
-Route::post('/clients', [ClientController::class, 'store'])->name('clients');
-Route::put('/clients', [ClientController::class, 'update'])->name('clients');
+Route::post('/clients', [ClientController::class, 'store'])->name('clients.store');
+Route::put('/clients/{client}', [ClientController::class, 'update'])->name('clients.update');
+Route::delete('/clients/{client}', [ClientController::class, 'destroy'])->name('clients.destroy');
 
 Route::inertia('/', 'Home')->name('home');
 Route::inertia('/about', 'About')->name('about');

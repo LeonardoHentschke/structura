@@ -158,7 +158,7 @@ const toggleTheme = () => {
         </div>
         <button
           @click="toggleTheme"
-          class="hover:bg-foreground/15 w-7 h-7 grid place-items-center rounded-full hover:outline outline-1 outline-foreground"
+          variant="ghost"
         >
           <component :is="isDarkMode ? SunIcon : MoonIcon" />
         </button>

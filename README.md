@@ -19,14 +19,12 @@ Após clonar este repositório, siga os passos abaixo para configurar o ambiente
   <tr>
     <th>Laravel</th>
     <th>Vue.js</th>
-    <th>Inertia.js</th>
     <th>Vite</th>
     <th>SQLite</th>
   </tr>
   <tr>
     <td><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="300" alt="Laravel Logo"></td>
     <td><img src="https://vuejs.org/images/logo.png" width="100" alt="Vue.js Logo"></td>
-    <td><img src="https://avatars.githubusercontent.com/u/47703742?s=280&v=4" width="100" alt="Inertia.js Logo"></td>
     <td><img src="https://vitejs.dev/logo.svg" width="100" alt="Vite Logo"></td>
     <td><img src="https://logospng.org/download/sqlite/sqlite-256.png" width="200" alt="SQLite Logo"></td>
   </tr>

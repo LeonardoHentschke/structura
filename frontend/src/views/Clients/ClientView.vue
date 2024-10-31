@@ -12,7 +12,7 @@ import { Separator } from '@/components/ui/separator';
 const route = useRoute();
 const router = useRouter();
 const isUpdateMode = ref(false);
-const formData = reactive({
+const formData = ref({
   name: "",
   email: "",
   phone: "",
@@ -124,7 +124,7 @@ const selectNavItem = (item) => {
           </Button>
         </nav>
       </aside>
-      <div class="flex-1 lg:max-w-2xl">
+      <div class="flex-1">
         <div class="space-y-6">
           <form @submit.prevent="submitForm">
             <Card v-if="selectedNavItem === 'data'">
@@ -196,10 +196,11 @@ const selectNavItem = (item) => {
                   <Button variant="secondary" @click.prevent="removeAddress(index)" :disabled="formData.addresses.length === 1">Remover Endereço</Button>
                   <Separator class="my-5" />
                 </div>
-                <Button variant="outline" @click.prevent="addAddress">Adicionar Endereço</Button>
+                <Button variant="outline" @click.prevent="addAddress">Adicionar mais um endereço</Button>
               </CardContent>
             </Card>
-            <Button type="submit" variant="primary">{{ isUpdateMode ? 'Atualizar Cliente' : 'Cadastrar Cliente' }}</Button>
+
+            <Button type="submit" class="mt-3 w-full">{{ isUpdateMode ? 'Atualizar Cliente' : 'Cadastrar Cliente' }}</Button>
           </form>
         </div>
       </div>

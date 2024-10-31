@@ -1,64 +1,65 @@
 import { defineStore } from "pinia";
 import { useAuthStore } from "@/stores/auth";
 
-export const useClientsStore = defineStore("clientsStore", {
+export const useProjectStore = defineStore("projectStore", {
   state: () => {
     return {
-      clients: [],
-      client: null,
+      projects: [],
+      project: null,
       errors: {},
     };
   },
   actions: {
-    /******************* Get all clients *******************/
-    async getAllClients() {
-      const res = await fetch("/api/clients", {
+    /******************* Get all projects *******************/
+    async getAllProjects() {
+      const res = await fetch("/api/projects", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
       const data = await res.json();
-      this.clients = data;
+      this.projects = data;
       return data;
     },
 
-    /******************* Get a single client *******************/
-    async getClient(id) {
-      const res = await fetch(`/api/clients/${id}`, {
+    /******************* Get a single project *******************/
+    async getProject(id) {
+      const res = await fetch(`/api/projects/${id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
       const data = await res.json();
-      this.client = data;
+      this.project = data;
       return data;
     },
 
-    /******************* Create a client *******************/
-    async createClient(formData) {
-      const res = await fetch("/api/clients", {
+    /******************* Create a project *******************/
+    async createProject(formData) {
+      const res = await fetch("/api/projects", {
         method: "post",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
 
       const data = await res.json();
-      console.log(data);
       
       if (data.errors) {
         this.errors = data.errors;
       } else {
         this.errors = {};
+        this.projects.push(data); // Optionally add the new project to the list
       }
     },
 
-    /******************* Update a client *******************/
-    async updateClient(clientId, formData) {
+    /******************* Update a project *******************/
+    async updateProject(projectId, formData) {
       const authStore = useAuthStore();
       if (authStore.user.id === formData.created_by) {
-        const res = await fetch(`/api/clients/${clientId}`, {
+        const res = await fetch(`/api/projects/${projectId}`, {
           method: "put",
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -73,15 +74,17 @@ export const useClientsStore = defineStore("clientsStore", {
           this.errors = data.errors;
         } else {
           this.errors = {};
-          this.router.push({ name: "clientList" });
+          this.router.push({ name: "projectList" });
+          this.projects = this.projects.map(project =>
+            project.id === projectId ? data : project
+          );
         }
       }
     },
 
-    /******************* Delete a client *******************/
-    async deleteClient(clientId) {
-      const authStore = useAuthStore();
-      const res = await fetch(`/api/clients/${clientId}`, {
+    /******************* Delete a project *******************/
+    async deleteProject(projectId) {
+      const res = await fetch(`/api/projects/${projectId}`, {
         method: "delete",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -89,8 +92,8 @@ export const useClientsStore = defineStore("clientsStore", {
       });
 
       if (res.ok) {
-        this.router.push({ name: "clientList" });
-        this.clients = this.clients.filter(client => client.id !== clientId);
+        this.router.push({ name: "projectList" });
+        this.projects = this.projects.filter(project => project.id !== projectId);
       } else {
         const data = await res.json();
         this.errors = data.errors || {};

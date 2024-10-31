@@ -21,7 +21,7 @@ return new class extends Migration
             $table->foreignId('updated_by')->nullable()->constrained('users');
             $table->boolean('mcmv');
             $table->decimal('square_meters', 8, 2);
-            $table->decimal('value', 10, 2);
+            $table->decimal('price', 10, 2);
             $table->timestamps();
         });
     }

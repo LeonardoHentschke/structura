@@ -13,7 +13,7 @@ const props = defineProps({
     default: () => []
   },
   modelValue: {
-    type: String,
+    type: [String, Number],
     default: ''
   },
   disabled: {

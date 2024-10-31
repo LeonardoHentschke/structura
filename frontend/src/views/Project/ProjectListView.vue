@@ -34,20 +34,32 @@ onMounted(projectStore.getAllProjects);
       <TableHeader>
         <TableRow>
           <TableHead>ID</TableHead>
-          <TableHead>Nome</TableHead>
-          <TableHead>Email</TableHead>
-          <TableHead>Telefone</TableHead>
+          <TableHead>Cliente</TableHead>
           <TableHead>CPF</TableHead>
+          <TableHead>Cidade</TableHead>
+          <TableHead>Rua</TableHead>
+          <TableHead>Situação</TableHead>
+          <TableHead>Tipo</TableHead>
+          <TableHead>Entrada</TableHead>
+          <TableHead>M²</TableHead>
+          <TableHead>R$</TableHead>
+          <TableHead>MCMV</TableHead>
           <TableHead>Ações</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        <TableRow v-for="client in projectStore.projects" :key="client.id">
-          <TableCell>{{ client.id }}</TableCell>
-          <TableCell class="font-medium">{{ client.name }}</TableCell>
-          <TableCell>{{ client.email }}</TableCell>
-          <TableCell>{{ client.phone }}</TableCell>
-          <TableCell>{{ client.cpf }}</TableCell>
+        <TableRow v-for="project in projectStore.projects" :key="project.id">
+          <TableCell>{{ project.id }}</TableCell>
+          <TableCell>{{ project.client.name }}</TableCell>
+          <TableCell>{{ project.client.cpf }}</TableCell>
+          <TableCell>{{ project.address.city }}</TableCell>
+          <TableCell>{{ project.address.street }}</TableCell>
+          <TableCell>{{ project.situation.name }}</TableCell>
+          <TableCell>{{ project.type.name }}</TableCell>
+          <TableCell>{{ project.created_at }}</TableCell>
+          <TableCell>{{ project.square_meters }}</TableCell>
+          <TableCell>{{ project.price }}</TableCell>
+          <TableCell>{{ project.mcmv }}</TableCell>
           <TableCell>
             <DropdownMenu>
               <DropdownMenuTrigger as-child>
@@ -59,11 +71,11 @@ onMounted(projectStore.getAllProjects);
               <DropdownMenuContent class="w-[160px]">
                 <DropdownMenuItem>
                   <Button variant="ghost">
-                    <router-link :to="{ name: 'client', params: { id: client.id } }">Editar</router-link>
+                    <router-link :to="{ name: 'project', params: { id: project.id } }">Editar</router-link>
                   </Button>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <Button variant="ghost" @click="deleteClient(client.id)">Excluir</Button>
+                  <Button variant="ghost" @click="deleteProject(project.id)">Excluir</Button>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

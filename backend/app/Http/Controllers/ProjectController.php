@@ -24,16 +24,23 @@ class ProjectController extends Controller implements HasMiddleware
 
     public function store(Request $request)
     {
+        $user = $request->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
         $validated = $request->validate([
             'client_id' => 'required|exists:clients,id',
             'address_id' => 'required|exists:addresses,id',
             'situation_id' => 'required|exists:project_situations,id',
             'type_id' => 'required|exists:project_types,id',
-            'created_by' => 'required|exists:users,id',
             'mcmv' => 'required|boolean',
             'square_meters' => 'required|numeric',
-            'value' => 'required|numeric',
+            'price' => 'required|numeric',
         ]);
+
+        $validated['created_by'] = $user->id;
+        $validated['updated_by'] = $user->id;
 
         $project = Project::create($validated);
         return response()->json($project, 201);
@@ -47,18 +54,25 @@ class ProjectController extends Controller implements HasMiddleware
 
     public function update(Request $request, $id)
     {
+        $user = $request->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
         $validated = $request->validate([
             'client_id' => 'exists:clients,id',
             'address_id' => 'exists:addresses,id',
             'situation_id' => 'exists:project_situations,id',
             'type_id' => 'exists:project_types,id',
-            'updated_by' => 'exists:users,id',
             'mcmv' => 'boolean',
             'square_meters' => 'numeric',
-            'value' => 'numeric',
+            'price' => 'numeric',
         ]);
 
         $project = Project::findOrFail($id);
+
+        $validated['updated_by'] = $user->id;
+
         $project->update($validated);
 
         return response()->json($project);
@@ -71,4 +85,3 @@ class ProjectController extends Controller implements HasMiddleware
         return response()->json(['message' => 'Project deleted successfully']);
     }
 }
-

@@ -45,7 +45,6 @@ export const useClientsStore = defineStore("clientsStore", {
       });
 
       const data = await res.json();
-      console.log(data);
       
       if (data.errors) {
         this.errors = data.errors;

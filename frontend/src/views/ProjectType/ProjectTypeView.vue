@@ -92,7 +92,7 @@ const projectTypes = computed(() => projectTypesStore.types);
               <div class="grid gap-4 py-4">
                 <div class="grid w-full max-w-sm items-center gap-1.5">
                   <Label for="name">Nome</Label>
-                  <Input id="name" placeholder="Ex: MCMV, Brinde, Promoção, ..." v-model="formData.name" />
+                  <Input id="name" placeholder="Ex: Projeto..." v-model="formData.name" />
                   <p v-if="formErrors.name" class="text-red-600">{{ formErrors.name }}</p>
                 </div>
                 <div class="grid w-full max-w-sm items-center gap-1.5">

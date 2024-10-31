@@ -40,7 +40,6 @@ export const useProjectStore = defineStore("projectStore", {
         method: "post",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
-          "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
@@ -51,7 +50,7 @@ export const useProjectStore = defineStore("projectStore", {
         this.errors = data.errors;
       } else {
         this.errors = {};
-        this.projects.push(data); // Optionally add the new project to the list
+        return res;
       }
     },
 

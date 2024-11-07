@@ -56,28 +56,24 @@ export const useProjectStore = defineStore("projectStore", {
 
     /******************* Update a project *******************/
     async updateProject(projectId, formData) {
-      const authStore = useAuthStore();
-      if (authStore.user.id === formData.created_by) {
-        const res = await fetch(`/api/projects/${projectId}`, {
-          method: "put",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        });
+      const res = await fetch(`/api/projects/${projectId}`, {
+        method: "put",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(formData),
+      });
 
-        const data = await res.json();
+      const data = await res.json();
 
-        if (data.errors) {
-          this.errors = data.errors;
-        } else {
-          this.errors = {};
-          this.router.push({ name: "projectList" });
-          this.projects = this.projects.map(project =>
-            project.id === projectId ? data : project
-          );
-        }
+      if (data.errors) {
+        this.errors = data.errors;
+      } else {
+        this.errors = {};
+        this.router.push({ name: "projectList" });
+        this.projects = this.projects.map(project =>
+          project.id === projectId ? data : project
+        );
       }
     },
 

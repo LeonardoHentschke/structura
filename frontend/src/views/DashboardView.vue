@@ -281,7 +281,7 @@ const data = [
 </script>
 
 <template>
-  <main class="grid grid-cols-1 md:grid-cols-2 gap-6 justify-center items-center w-full bg-primary-foreground p-6" style="min-height: calc(100vh - 81px);">
+  <main class="grid grid-cols-1 md:grid-cols-2 gap-6 justify-center items-center w-full bg-primary-foreground p-6" style="height: calc(100vh - 81px);">
     <!-- Gráfico de Barras -->
     <Card class="w-full">
       <CardHeader>

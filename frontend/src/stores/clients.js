@@ -55,20 +55,25 @@ export const useClientsStore = defineStore("clientsStore", {
 
     /******************* Update a client *******************/
     async updateClient(clientId, formData) {
-      const res = await fetch(`/api/clients/${clientId}`, {
-        method: "put",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify(formData),
-      });
+      const authStore = useAuthStore();
+      if (authStore.user.id === formData.created_by) {
+        const res = await fetch(`/api/clients/${clientId}`, {
+          method: "put",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        });
 
-      const data = await res.json();
-      if (data.errors) {
-        this.errors = data.errors;
-      } else {
-        this.errors = {};
-        this.router.push({ name: "clientList" });
+        const data = await res.json();
+
+        if (data.errors) {
+          this.errors = data.errors;
+        } else {
+          this.errors = {};
+          this.router.push({ name: "clientList" });
+        }
       }
     },
 

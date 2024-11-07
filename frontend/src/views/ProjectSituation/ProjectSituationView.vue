@@ -2,13 +2,11 @@
 import { onMounted, reactive, ref, computed } from "vue";
 import { useProjectSituationsStore } from "@/stores/projectSituation";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { dialogState } from "@/composable/dialog";
-import { DotsHorizontalIcon } from "@radix-icons/vue";
 
 const projectSituationsStore = useProjectSituationsStore();
 const [isOpen, closeDialog] = dialogState();
@@ -54,7 +52,7 @@ const submitForm = async () => {
   isSubmitting.value = false;
 };
 
-const editProjectSituation = (situation) => {
+const editClient = (situation) => {
   formData.id = situation.id;
   formData.name = situation.name;
   formData.description = situation.description;
@@ -62,7 +60,7 @@ const editProjectSituation = (situation) => {
   isOpen.value = true;
 };
 
-const deleteProjectSituation = (id) => {
+const deleteClient = (id) => {
   if (confirm("Tem certeza de que deseja excluir esta situação de projeto?")) {
     projectSituationsStore.deleteProjectSituation(id);
   }
@@ -128,22 +126,8 @@ const situations = computed(() => projectSituationsStore.situations);
           <TableCell class="font-medium">{{ situation.name }}</TableCell>
           <TableCell class="font-medium">{{ situation.description }}</TableCell>
           <TableCell>
-            <DropdownMenu>
-              <DropdownMenuTrigger as-child>
-                <Button variant="ghost" class="flex h-8 w-8 p-0 data-[state=open]:bg-muted">
-                  <DotsHorizontalIcon class="h-4 w-4" />
-                  <span class="sr-only">Abrir menu</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent class="w-[160px]">
-                <DropdownMenuItem>
-                  <Button variant="ghost" @click="editProjectSituation(situation)">Editar</Button>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Button variant="ghost" @click="deleteProjectSituation(situation.id)">Excluir</Button>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <Button variant="outline" @click="editClient(situation)">Editar</Button>
+            <Button variant="destructive" @click="deleteClient(situation.id)">Excluir</Button>
           </TableCell>
         </TableRow>
       </TableBody>

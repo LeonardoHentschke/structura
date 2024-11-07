@@ -2,13 +2,11 @@
 import { onMounted, reactive, ref, computed } from "vue";
 import { useProjectTypesStore } from "@/stores/projectType";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { dialogState } from "@/composable/dialog";
-import { DotsHorizontalIcon } from "@radix-icons/vue";
 
 const projectTypesStore = useProjectTypesStore();
 const [isOpen, closeDialog] = dialogState();
@@ -54,7 +52,7 @@ const submitForm = async () => {
   isSubmitting.value = false;
 };
 
-const editProjectType = (type) => {
+const editClient = (type) => {
   formData.id = type.id;
   formData.name = type.name;
   formData.description = type.description;
@@ -62,7 +60,7 @@ const editProjectType = (type) => {
   isOpen.value = true;
 };
 
-const deleteProjectType = (id) => {
+const deleteClient = (id) => {
   if (confirm("Tem certeza de que deseja excluir este tipo de projeto?")) {
     projectTypesStore.deleteProjectType(id);
   }
@@ -128,22 +126,8 @@ const projectTypes = computed(() => projectTypesStore.types);
           <TableCell class="font-medium">{{ type.name }}</TableCell>
           <TableCell class="font-medium">{{ type.description }}</TableCell>
           <TableCell>
-            <DropdownMenu>
-              <DropdownMenuTrigger as-child>
-                <Button variant="ghost" class="flex h-8 w-8 p-0 data-[state=open]:bg-muted">
-                  <DotsHorizontalIcon class="h-4 w-4" />
-                  <span class="sr-only">Abrir menu</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent class="w-[160px]">
-                <DropdownMenuItem>
-                  <Button variant="ghost" @click="editProjectType(type)">Editar</Button>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Button variant="ghost" @click="deleteProjectType(type.id)">Excluir</Button>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <Button variant="outline" @click="editClient(type)">Editar</Button>
+            <Button variant="destructive" @click="deleteClient(type.id)">Excluir</Button>
           </TableCell>
         </TableRow>
       </TableBody>

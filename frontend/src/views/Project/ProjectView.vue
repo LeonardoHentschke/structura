@@ -108,13 +108,9 @@ const submitForm = async () => {
 const fetchProject = async () => {
   if (route.params.id) {
     const project = await projectStore.getProject(route.params.id);
+    console.log(project);
     formData.value = { ...project };
     isUpdateMode.value = true;
-
-    clientAddresses.value = [{
-      value: project.address_id,
-      label: `${project.address.street}, ${project.address.city}`
-    }];
   }
 };
 </script>
@@ -123,8 +119,8 @@ const fetchProject = async () => {
   <div class="hidden space-y-6 p-10 pb-16 md:block">
     <Card>
       <CardHeader>
-        <CardTitle>{{ isUpdateMode ? 'Editar projeto' : 'Cadastrar projeto' }}</CardTitle>
-        <CardDescription>{{ isUpdateMode ? 'Edite as informações do projeto' : 'Gerencie as informações de seu projeto' }}</CardDescription>
+        <CardTitle>Cadastrar projeto</CardTitle>
+        <CardDescription>Gerencie as informações de seu projeto</CardDescription>
         <Separator class="my-3" />
       </CardHeader>
       <form @submit.prevent="submitForm">
@@ -190,7 +186,7 @@ const fetchProject = async () => {
         </CardContent>
         <CardFooter>
           <div class="flex justify-end">
-            <Button>{{ isUpdateMode ? 'Salvar alterações' : 'Cadastrar' }}</Button>
+            <Button>Salvar</Button>
           </div>
         </CardFooter>
       </form>

@@ -1,0 +1,12 @@
+[33m1163948[m[33m ([m[1;36mHEAD -> [m[1;32mstructura-jeferson[m[33m, [m[1;32mmain[m[33m)[m Ajustes no layout do Dashboard, Home, About, Login, Register e Client e footer fixo, melhorias no modal de edição de perfil com atualização automática das informações, correções no layout responsivo e melhorias gerais na experiência de usuário.
+[33m705033d[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m crud project
+[33mb3fca40[m add many feat
+[33m3cb7d63[m Split project
+[33m67d27c5[m Edit menu adn clients
+[33m5bd9041[m refactoring profile edit
+[33m0fb1460[m Add table clients
+[33mb229c80[m Merge branch 'main' of https://github.com/LeonardoHentschke/structura
+[33md04ac91[m Init add clients
+[33m14721de[m Update README.md
+[33mf2e5a6c[m Sprint 1
+[33mf2b4483[m Initial commit

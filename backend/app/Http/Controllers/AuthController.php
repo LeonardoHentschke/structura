@@ -16,7 +16,11 @@ class AuthController extends Controller
             'password' => 'required|confirmed'
         ]);
 
-        $user = User::create($fields);
+        $user = User::create([
+            'name' => $fields['name'],
+            'email' => $fields['email'],
+            'password' => Hash::make($fields['password']),
+        ]);
 
         $token = $user->createToken($request->name);
 
@@ -38,7 +42,7 @@ class AuthController extends Controller
         if (!$user || !Hash::check($request->password, $user->password)) {
             return [
                 'errors' => [
-                    'email' => ['As credenciais fornecidas estão incorrectas.']
+                    'email' => ['As credenciais fornecidas estão incorretas.']
                 ]
             ];
         }
@@ -56,7 +60,24 @@ class AuthController extends Controller
         $request->user()->tokens()->delete();
 
         return [
-            'message' => 'Está desconectado.' 
+            'message' => 'Você foi desconectado.' 
         ];
+    }
+
+    // Método para atualizar o perfil do usuário
+    public function update(Request $request)
+    {
+        $user = $request->user();
+
+        // Validação dos dados de atualização
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+        ]);
+
+        // Atualização dos dados do usuário
+        $user->update($validatedData);
+
+        return response()->json(['user' => $user], 200);
     }
 }

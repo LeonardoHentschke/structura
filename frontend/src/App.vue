@@ -1,17 +1,14 @@
 <script setup>
-import { ref, onMounted } from 'vue'
 import { RouterLink, RouterView } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
-import { switchTheme } from "@/lib/theme";
 
-import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, navigationMenuTriggerStyle } from '@/components/ui/navigation-menu';
+import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from '@/components/ui/navigation-menu';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { MoonIcon, SunIcon } from '@radix-icons/vue';
 import { Button } from '@/components/ui/button';
+import ThemeSelector from './components/ThemeSelector.vue';
 
 const authStore = useAuthStore();
-const isDarkMode = ref(false);
 
 const components = [
 {
@@ -40,14 +37,6 @@ const components = [
   },
 ];
 
-onMounted(() => {
-  isDarkMode.value = localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
-});
-
-const toggleTheme = () => {
-  switchTheme();
-  isDarkMode.value = !isDarkMode.value;
-};
 </script>
 
 <template>
@@ -125,9 +114,7 @@ const toggleTheme = () => {
           </RouterLink>
         </div>
 
-        <Button variant="ghost" size="icon" @click="toggleTheme">
-            <component :is="isDarkMode ? SunIcon : MoonIcon" />
-        </Button>
+        <ThemeSelector />
       </section>
     </nav>
   </header>

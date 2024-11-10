@@ -36,28 +36,34 @@ export const useProjectStore = defineStore("projectStore", {
 
     /******************* Create a project *******************/
     async createProject(formData) {
-      const res = await fetch("/api/projects", {
-        method: "post",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify(formData),
-      });
+      try {
+        const res = await fetch("/api/projects", {
+          method: "post",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        });
 
-      const data = await res.json();
-      
-      if (data.errors) {
-        this.errors = data.errors;
-      } else {
+        if (!res.ok) {
+          const errorData = await res.json();
+          this.errors = errorData.errors || {};
+          return { status: res.status, errors: this.errors };
+        }
+
+        const data = await res.json();
         this.errors = {};
-        return res;
+        return { status: res.status, data };
+      } catch (error) {
+        console.error("Erro ao criar o projeto:", error);
+        throw error;
       }
     },
 
     /******************* Update a project *******************/
     async updateProject(projectId, formData) {
-      const authStore = useAuthStore();
-      if (authStore.user.id === formData.created_by) {
+      try {
         const res = await fetch(`/api/projects/${projectId}`, {
           method: "put",
           headers: {
@@ -67,36 +73,89 @@ export const useProjectStore = defineStore("projectStore", {
           body: JSON.stringify(formData),
         });
 
-        const data = await res.json();
-
-        if (data.errors) {
-          this.errors = data.errors;
-        } else {
-          this.errors = {};
-          this.router.push({ name: "projectList" });
-          this.projects = this.projects.map(project =>
-            project.id === projectId ? data : project
-          );
+        if (!res.ok) {
+          const errorData = await res.json();
+          this.errors = errorData.errors || {};
+          return { status: res.status, errors: this.errors };
         }
+
+        const data = await res.json();
+        this.errors = {};
+        this.projects = this.projects.map((project) =>
+          project.id === projectId ? data : project
+        );
+
+        return { status: res.status, data };
+      } catch (error) {
+        console.error("Erro ao atualizar o projeto:", error);
+        throw error;
       }
     },
 
     /******************* Delete a project *******************/
     async deleteProject(projectId) {
-      const res = await fetch(`/api/projects/${projectId}`, {
-        method: "delete",
+      try {
+        const res = await fetch(`/api/projects/${projectId}`, {
+          method: "delete",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+
+        if (res.ok) {
+          this.projects = this.projects.filter(
+            (project) => project.id !== projectId
+          );
+          return { status: res.status };
+        } else {
+          const data = await res.json();
+          this.errors = data.errors || {};
+          return { status: res.status, errors: this.errors };
+        }
+      } catch (error) {
+        console.error("Erro ao excluir o projeto:", error);
+        throw error;
+      }
+    },
+
+    /******************* Create an address *******************/
+    async createAddress(formData) {
+      try {
+        const res = await fetch("/api/projects/addresses", {
+          method: "post",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        });
+
+        if (!res.ok) {
+          const errorData = await res.json();
+          this.errors = errorData.errors || {};
+          throw new Error("Erro ao criar o endereço");
+        }
+
+        const data = await res.json();
+        return data;
+      } catch (error) {
+        console.error("Erro ao criar o endereço:", error);
+        throw error;
+      }
+    },
+
+    /******************* Get all addresses of a client *******************/
+    async getClientAddresses(clientId) {
+      const res = await fetch(`/api/projects/clients/${clientId}/addresses`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-
-      if (res.ok) {
-        this.router.push({ name: "projectList" });
-        this.projects = this.projects.filter(project => project.id !== projectId);
-      } else {
-        const data = await res.json();
-        this.errors = data.errors || {};
+      if (!res.ok) {
+        throw new Error("Erro ao buscar endereços do cliente");
       }
+      const data = await res.json();
+      return data;
     },
   },
 });

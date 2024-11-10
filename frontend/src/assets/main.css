@@ -48,6 +48,9 @@
     /* change to any hsl value you want */
     --vis-secondary-color: 160 81% 40%;
     --vis-text-color: var(--muted-foreground);
+
+    --logout-bg: #f3f3f3;
+    --logout-text: #000000;
   }
  
   .dark {
@@ -79,15 +82,27 @@
     --destructive-foreground: 0 0% 98%;
  
     --ring: 240 4.9% 83.9%;
+
+    --logout-bg: #2e2e2e;
+    --logout-text: #ffffff;
   }
 }
  
 @layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
   * {
     @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
     font-family: "Poppins", sans-serif;
+  }
+  .nav-bar {
+    @apply p-4 mx-auto max-w-screen-xl flex items-center justify-between bg-secondary text-gray-100;
+    border-bottom: 2px solid var(--primary);
   }
 }

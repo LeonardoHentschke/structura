@@ -58,5 +58,40 @@ export const useAuthStore = defineStore("authStore", {
         this.router.push({ name: "home" });
       }
     },
+    /******************* Update User Profile *******************/
+    async updateProfile(profileData) {
+      // Verifica se o usuário autenticado está tentando atualizar seu próprio perfil
+      if (this.user && this.user.id === profileData.id) {
+        try {
+          const res = await fetch(`/api/user`, {
+            method: "PUT",
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(profileData),
+          });
+    
+          const data = await res.json();
+    
+          // Verifica se há erros na resposta e atualiza o estado
+          if (res.ok) {
+            this.user = data.user; // Atualiza o estado do usuário com os dados retornados
+            this.errors = {};
+            return true;
+          } else {
+            this.errors = data.errors || { general: ["Erro ao atualizar perfil"] };
+            return false;
+          }
+        } catch (error) {
+          console.error("Erro ao atualizar perfil:", error);
+          this.errors = { general: ["Erro inesperado. Por favor, tente novamente."] };
+          return false;
+        }
+      } else {
+        console.error("Acesso negado: o usuário não pode atualizar este perfil.");
+        return false;
+      }
+    },
   },
 });

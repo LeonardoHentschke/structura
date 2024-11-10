@@ -59,4 +59,20 @@ class AuthController extends Controller
             'message' => 'Está desconectado.' 
         ];
     }
+    // Método para atualizar o perfil do usuário
+    public function update(Request $request)
+    {
+        $user = $request->user();
+
+        // Validação dos dados de atualização
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+        ]);
+
+        // Atualização dos dados do usuário
+        $user->update($validatedData);
+
+        return response()->json(['user' => $user], 200);
+    }
 }

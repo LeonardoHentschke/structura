@@ -62,17 +62,39 @@ class ClientController extends Controller implements HasMiddleware
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
+        // Buscar o cliente
         $client = Client::findOrFail($id);
 
-        // Atualizar o cliente com o ID do usuário como 'updated_by'
-        $client->update(array_merge(
-            $request->only('name', 'cpf', 'phone', 'email', 'birth_date'),
-            ['updated_by' => $user->id]
-        ));
+        // Validar e atualizar os dados principais do cliente
+        $validatedClientData = $request->validate([
+            'name' => 'required|string|max:255',
+            'cpf' => 'required|string|max:14', // Ajuste conforme o formato do CPF que você usa
+            'phone' => 'nullable|string|max:15',
+            'email' => 'nullable|email|max:255',
+            'birth_date' => 'nullable|date',
+        ]);
 
-        // Aqui você pode adicionar a lógica para atualizar os endereços, se necessário
+        // Atualizar os campos do cliente e marcar quem fez a atualização
+        $client->update(array_merge($validatedClientData, [
+            'updated_by' => $user->id,
+        ]));
 
-        return response()->json($client);
+        // Atualizar endereços - vamos forçar a atualização para garantir a consistência
+        $addresses = $request->get('addresses', []);
+
+        // Primeiro, remover todos os endereços existentes
+        $client->addresses()->delete();
+
+        // Agora, recriar todos os endereços recebidos no request
+        foreach ($addresses as $addressData) {
+            $client->addresses()->create(array_merge($addressData, [
+                'created_by' => $user->id,
+                'updated_by' => $user->id,
+            ]));
+        }
+
+        // Retornar o cliente atualizado com os novos endereços
+        return response()->json($client->load('addresses'));
     }
 
     public function destroy($id)

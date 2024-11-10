@@ -29,6 +29,7 @@ class ProjectController extends Controller implements HasMiddleware
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
+        // Validação dos campos
         $validated = $request->validate([
             'client_id' => 'required|exists:clients,id',
             'address_id' => 'required|exists:addresses,id',
@@ -39,10 +40,16 @@ class ProjectController extends Controller implements HasMiddleware
             'price' => 'required|numeric',
         ]);
 
+        // Garantir que `mcmv` é booleano
+        $validated['mcmv'] = filter_var($validated['mcmv'], FILTER_VALIDATE_BOOLEAN);
+
+        // Definir campos de usuário que criou e atualizou
         $validated['created_by'] = $user->id;
         $validated['updated_by'] = $user->id;
 
+        // Criar projeto
         $project = Project::create($validated);
+
         return response()->json($project, 201);
     }
 
@@ -69,6 +76,11 @@ class ProjectController extends Controller implements HasMiddleware
             'price' => 'numeric',
         ]);
 
+        // Forçar a conversão de mcmv para booleano
+        if (isset($validated['mcmv'])) {
+            $validated['mcmv'] = filter_var($validated['mcmv'], FILTER_VALIDATE_BOOLEAN);
+        }
+
         $project = Project::findOrFail($id);
 
         $validated['updated_by'] = $user->id;
@@ -76,6 +88,20 @@ class ProjectController extends Controller implements HasMiddleware
         $project->update($validated);
 
         return response()->json($project);
+    }
+
+    public function hasProjects(Request $request)
+    {
+        $user = $request->user();
+
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        // Verifica se existem projetos criados pelo usuário
+        $hasProjects = Project::where('created_by', $user->id)->exists();
+
+        return response()->json(['has_projects' => $hasProjects]);
     }
 
     public function destroy($id)

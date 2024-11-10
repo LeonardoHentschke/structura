@@ -1,12 +1,11 @@
 <script setup>
-import { ref, onMounted, watch, nextTick } from 'vue';
+import { ref, nextTick } from 'vue';
 import { RouterLink, RouterView, useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
-import { setThemeOnLoad, switchTheme, getCurrentTheme } from "@/lib/theme";
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from '@/components/ui/navigation-menu';
-import { MoonIcon, SunIcon } from '@radix-icons/vue';
 import { Button } from '@/components/ui/button';
 import Loader from "@/components/Loader.vue";
+import ThemeSelector from './components/ThemeSelector.vue';
 
 const authStore = useAuthStore();
 const router = useRouter();
@@ -56,12 +55,6 @@ router.afterEach(() => {
   finishLoading();
 });
 
-onMounted(() => {
-  setThemeOnLoad();
-  isDarkMode.value = getCurrentTheme();
-});
-
-// Modal de perfil
 const openProfileModal = () => {
   isProfileModalVisible.value = true;
 };
@@ -84,10 +77,6 @@ const saveProfileChanges = async () => {
   }
 };
 
-const toggleTheme = () => {
-  switchTheme();
-  isDarkMode.value = getCurrentTheme();
-};
 </script>
 
 <template>
@@ -167,9 +156,7 @@ const toggleTheme = () => {
             </RouterLink>
           </div>
 
-          <Button variant="ghost" size="icon" @click="toggleTheme">
-            <component :is="isDarkMode ? SunIcon : MoonIcon" />
-          </Button>
+          <ThemeSelector />
         </section>
       </nav>
     </header>

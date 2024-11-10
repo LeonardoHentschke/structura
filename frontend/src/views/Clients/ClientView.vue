@@ -193,14 +193,16 @@ const selectNavItem = (item) => {
                     <Label for="longitude">Longitude</Label>
                     <Input id="longitude" type="text" v-model="address.longitude" />
                   </div>
-                  <Button variant="secondary" @click.prevent="removeAddress(index)" :disabled="formData.addresses.length === 1">Remover Endereço</Button>
+                  <div class="flex justify-end">
+                    <Button variant="destructive" @click.prevent="removeAddress(index)" :disabled="formData.addresses.length === 1">Remover Endereço</Button>
+                  </div>
                   <Separator class="my-5" />
                 </div>
                 <Button variant="outline" @click.prevent="addAddress">Adicionar mais um endereço</Button>
               </CardContent>
             </Card>
 
-            <Button type="submit" class="mt-3 w-full">{{ isUpdateMode ? 'Atualizar Cliente' : 'Cadastrar Cliente' }}</Button>
+            <Button class="mt-3 w-full">{{ isUpdateMode ? 'Atualizar Cliente' : 'Cadastrar Cliente' }}</Button>
           </form>
         </div>
       </div>

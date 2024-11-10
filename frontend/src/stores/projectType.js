@@ -45,8 +45,6 @@ export const useProjectTypesStore = defineStore("projectTypesStore", {
 
     /******************* Delete a project type *******************/
     async deleteProjectType(id) {
-      console.log(id);
-      
       const res = await fetch(`/api/project-types/${id}`, {
         method: "DELETE",
         headers: {

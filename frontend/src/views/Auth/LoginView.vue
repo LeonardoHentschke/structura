@@ -2,9 +2,11 @@
 import { useAuthStore } from "@/stores/auth";
 import { storeToRefs } from "pinia";
 import { onMounted, reactive } from "vue";
+import { useGlobalStore } from "@/stores/global";
 
 const { errors } = storeToRefs(useAuthStore());
 const { authenticate } = useAuthStore();
+const globalStore = useGlobalStore();
 
 const formData = reactive({
   email: "",
@@ -12,6 +14,17 @@ const formData = reactive({
 });
 
 onMounted(() => (errors.value = {}));
+
+const login = async () => {
+  try {
+    globalStore.startLoading();  // Início do loader
+    await authenticate('login', formData);
+  } catch (error) {
+    console.error("Erro no login:", error);
+  } finally {
+    globalStore.finishLoading();  // Fim do loader
+  }
+};
 </script>
 
 <template>
@@ -19,7 +32,7 @@ onMounted(() => (errors.value = {}));
     <!-- Card de Login -->
     <form
       class="bg-white dark:bg-zinc-900 shadow-2xl rounded-2xl overflow-hidden border-4 border-[#ffd633] w-full max-w-md"
-      @submit.prevent="authenticate('login', formData)"
+      @submit.prevent=login
     >
       <div class="px-8 py-10 md:px-10">
         <h2 class="text-4xl font-extrabold text-center text-zinc-800 dark:text-white">

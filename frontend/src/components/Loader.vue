@@ -26,10 +26,10 @@
     </div>
   </template>
   
-  <script>
-  export default {
-    name: 'Loader',
-  };
+  <script setup>
+    import { useGlobalStore } from '@/stores/global';
+    const globalStore = useGlobalStore();
+    const isLoading = globalStore.isLoading;
   </script>
   
   <style scoped>

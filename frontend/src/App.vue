@@ -1,15 +1,16 @@
 <script setup>
-import { ref, nextTick } from 'vue';
+import { ref, onMounted } from 'vue';
 import { RouterLink, RouterView, useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from '@/components/ui/navigation-menu';
 import { Button } from '@/components/ui/button';
 import Loader from "@/components/Loader.vue";
+import { useGlobalStore } from '@/stores/global';
 import ThemeSelector from './components/ThemeSelector.vue';
 
 const authStore = useAuthStore();
 const router = useRouter();
-const isLoading = ref(false);
+const globalStore = useGlobalStore();
 const isProfileModalVisible = ref(false);
 const isDarkMode = ref(false);
 
@@ -36,25 +37,6 @@ const components = [
   },
 ];
 
-const startLoading = () => {
-  nextTick(() => {
-    isLoading.value = true;
-  });
-};
-
-const finishLoading = () => {
-  isLoading.value = false;
-};
-
-router.beforeEach((to, from, next) => {
-  startLoading();
-  next();
-});
-
-router.afterEach(() => {
-  finishLoading();
-});
-
 const openProfileModal = () => {
   isProfileModalVisible.value = true;
 };
@@ -76,24 +58,31 @@ const saveProfileChanges = async () => {
     console.error("Falha ao salvar alterações no perfil.");
   }
 };
+onMounted(() => {
+  router.beforeEach((to, from, next) => {
+    globalStore.startLoading();
+    next();
+  });
 
+  router.afterEach(() => {
+    globalStore.finishLoading();
+  });
+});
 </script>
 
 <template>
   <div class="flex flex-col min-h-screen">
-    <!-- Loader Component -->
-    <Loader v-if="isLoading" class="absolute inset-0 z-999" />
-
+    <Loader v-if="globalStore.isLoading" />
     <header class="sticky z-40 top-0 bg-background/80 backdrop-blur-lg border-b border-border dark:bg-gray-900/80">
       <nav class="p-4 mx-auto max-w-screen-lg flex items-center justify-between">
         <NavigationMenu>
           <NavigationMenuList>
-            <NavigationMenuItem v-if="!authStore.user">
+            <NavigationMenuItem>
               <RouterLink :to="{ name: 'home' }">
                 <Button class="nav-button text-black dark:text-white">Inicio</Button>
               </RouterLink>
             </NavigationMenuItem>
-            <NavigationMenuItem v-if="!authStore.user">
+            <NavigationMenuItem>
               <RouterLink :to="{ name: 'about' }">
                 <Button class="nav-button text-black dark:text-white">Sobre</Button>
               </RouterLink>

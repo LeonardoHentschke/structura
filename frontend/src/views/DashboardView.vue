@@ -283,7 +283,7 @@ const data = [
 <template>
   <main class="grid grid-cols-1 md:grid-cols-2 gap-6 justify-center items-center w-full dark:bg-gray-900 p-6" style="min-height: calc(100vh - 81px);">
     <!-- Gráfico de Barras -->
-    <Card class="w-full">
+    <Card class="w-full dark:bg-gray-900">
       <CardHeader>
         <CardTitle>Gráfico de Barras</CardTitle>
         <CardDescription>Total vs Previsão Mensal</CardDescription>
@@ -306,7 +306,7 @@ const data = [
     </Card>
 
     <!-- Gráfico de Área -->
-    <Card class="w-full">
+    <Card class="w-full dark:bg-gray-900">
       <CardHeader>
         <CardTitle>Gráfico de Área</CardTitle>
         <CardDescription>Total vs Previsão Mensal</CardDescription>
@@ -320,7 +320,7 @@ const data = [
     </Card>
 
     <!-- Gráfico de Linha -->
-    <Card class="w-full">
+    <Card class="w-full dark:bg-gray-900">
       <CardHeader>
         <CardTitle>Gráfico de Linha</CardTitle>
         <CardDescription>Crescimento de Exportação vs Importação</CardDescription>
@@ -343,7 +343,7 @@ const data = [
     </Card>
 
     <!-- Gráfico de Rosca -->
-    <Card class="w-full">
+    <Card class="w-full dark:bg-gray-900">
       <CardHeader>
         <CardTitle>Gráfico de Rosca</CardTitle>
         <CardDescription>Distribuição Total</CardDescription>

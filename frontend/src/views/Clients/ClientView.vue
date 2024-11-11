@@ -102,7 +102,7 @@ const selectNavItem = (item) => {
 </script>
 
 <template>
-  <div class="hidden space-y-6 p-10 pb-16 md:block">
+  <div class="hidden space-y-6 p-10 pb-16 md:block dark:bg-gray-900">
     <div class="space-y-0.5">
       <h2 class="text-2xl font-bold tracking-tight">
         {{ isUpdateMode ? 'Editar cliente' : 'Cadastrar cliente' }}: {{ formData.name }}
@@ -127,7 +127,7 @@ const selectNavItem = (item) => {
       <div class="flex-1">
         <div class="space-y-6">
           <form @submit.prevent="submitForm">
-            <Card v-if="selectedNavItem === 'data'">
+            <Card v-if="selectedNavItem === 'data'" class="dark:bg-gray-900">
               <CardHeader>
                 <CardTitle>{{ isUpdateMode ? `Cliente ID: ${formData.id}` : 'Cadastrar Novo Cliente' }}</CardTitle>
                 <CardDescription>Altere ou insira as informações do cliente</CardDescription>
@@ -166,7 +166,7 @@ const selectNavItem = (item) => {
               </CardContent>
             </Card>
 
-            <Card v-if="selectedNavItem === 'address'">
+            <Card v-if="selectedNavItem === 'address'" class="dark:bg-gray-900">
               <CardHeader>
                 <CardTitle>{{ isUpdateMode ? `Endereços do cliente ID: ${formData.id}` : 'Cadastrar Endereços' }}</CardTitle>
                 <CardDescription>Gerencie os endereços do cliente</CardDescription>
@@ -198,7 +198,7 @@ const selectNavItem = (item) => {
                   </div>
                   <Separator class="my-5" />
                 </div>
-                <Button variant="outline" @click.prevent="addAddress">Adicionar mais um endereço</Button>
+                <Button @click.prevent="addAddress">Adicionar mais um endereço</Button>
               </CardContent>
             </Card>
 

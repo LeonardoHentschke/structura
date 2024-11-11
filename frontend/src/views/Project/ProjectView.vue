@@ -192,7 +192,7 @@ const handleAddressSaved = async (newAddress) => {
 </script>
 
 <template>
-  <div class="hidden space-y-6 p-10 pb-16 md:block">
+  <div class="hidden space-y-6 p-10 pb-16 md:block dark:bg-gray-900">
     <Card>
       <CardHeader>
         <CardTitle>Cadastrar projeto</CardTitle>

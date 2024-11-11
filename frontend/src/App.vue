@@ -332,7 +332,7 @@ const saveProfileChanges = async () => {
     width: 35px;
     height: 35px;
     border: none;
-    border-radius: 20%;
+    border-radius: 15px;
     cursor: pointer;
     position: relative;
     overflow: hidden;
@@ -369,8 +369,9 @@ const saveProfileChanges = async () => {
   /* Efeito de hover no botão */
   .logout-cano-btn:hover {
     width: 125px;
-    border-radius: 10px;
+    border-radius: 15px;
     transition-duration: 0.3s;
+    background-color: crimson;
   }
 
   .logout-cano-btn:hover .sign {

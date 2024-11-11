@@ -1,10 +1,10 @@
 <script setup>
-import { onMounted, reactive, ref, computed } from "vue";
+import { onMounted, ref, computed, reactive } from "vue";
 import { useProjectSituationsStore } from "@/stores/projectSituation";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { dialogState } from "@/composable/dialog";
@@ -22,6 +22,9 @@ const formData = reactive({
 const isSubmitting = ref(false);
 const formErrors = ref({});
 const isEditMode = ref(false);
+const isMenuOpen = ref({});
+
+const situations = computed(() => projectSituationsStore.situations);
 
 const resetForm = () => {
   formData.id = null;
@@ -62,28 +65,37 @@ const editProjectSituation = (situation) => {
   isOpen.value = true;
 };
 
-const deleteProjectSituation = (id) => {
+const deleteProjectSituation = async (id) => {
   if (confirm("Tem certeza de que deseja excluir esta situação de projeto?")) {
-    projectSituationsStore.deleteProjectSituation(id);
+    await projectSituationsStore.deleteProjectSituation(id);
+    projectSituationsStore.getAllProjectSituations();
   }
 };
 
-onMounted(projectSituationsStore.getAllProjectSituations);
+const toggleMenu = (id) => {
+  isMenuOpen.value[id] = !isMenuOpen.value[id];
+};
 
-const situations = computed(() => projectSituationsStore.situations);
+const closeMenu = (id) => {
+  isMenuOpen.value[id] = false;
+};
+
+onMounted(projectSituationsStore.getAllProjectSituations);
 </script>
 
 <template>
   <div class="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
     <div class="flex items-center justify-between space-y-2">
       <div>
-        <h2 class="text-2xl font-bold tracking-tight">Situações de Projeto!</h2>
-        <p class="text-muted-foreground">Aqui estão suas situações de projeto personalizadas!</p>
+        <h2 class="text-3xl font-extrabold tracking-tighter text-primary dark:text-yellow-500">Situações de Projeto</h2>
+        <p class="text-muted-foreground text-sm tracking-wide dark:text-gray-300">Gerencie as situações de projeto de forma fácil e rápida</p>
       </div>
       <div class="flex items-center space-x-2">
         <Dialog v-model:open="isOpen">
           <DialogTrigger as-child>
-            <Button @click="resetForm">Adicionar nova situação</Button>
+            <Button @click="resetForm" class="bg-primary text-primary-foreground dark:bg-yellow-500 dark:text-gray-800 font-bold transition-colors duration-300 shadow-md hover:shadow-lg">
+              Adicionar nova situação
+            </Button>
           </DialogTrigger>
           <DialogContent class="sm:max-w-[425px]">
             <form @submit.prevent="submitForm">
@@ -112,41 +124,144 @@ const situations = computed(() => projectSituationsStore.situations);
       </div>
     </div>
 
-    <Table>
-      <TableCaption v-if="!situations.length">Nenhuma situação de projeto cadastrada ainda.</TableCaption>
-      <TableHeader>
-        <TableRow>
-          <TableHead>ID</TableHead>
-          <TableHead>Nome</TableHead>
-          <TableHead>Descrição</TableHead>
-          <TableHead>Ações</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        <TableRow v-for="situation in situations" :key="situation.id">
-          <TableCell>{{ situation.id }}</TableCell>
-          <TableCell class="font-medium">{{ situation.name }}</TableCell>
-          <TableCell class="font-medium">{{ situation.description }}</TableCell>
-          <TableCell>
-            <DropdownMenu>
-              <DropdownMenuTrigger as-child>
-                <Button variant="ghost" class="flex h-8 w-8 p-0 data-[state=open]:bg-muted">
+    <div class="bg-card dark:bg-gray-800 p-6 rounded-lg shadow-xl">
+      <Table class="w-full text-left bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700">
+        <TableCaption v-if="!situations.length" class="text-muted-foreground dark:text-gray-400">Nenhuma situação de projeto cadastrada ainda.</TableCaption>
+        <TableHeader class="bg-primary dark:bg-yellow-500 text-primary-foreground dark:text-gray-800">
+          <TableRow class="border-b border-muted dark:border-gray-700">
+            <TableHead class="py-3 px-4 w-20 text-center dark:text-gray-100">ID</TableHead>
+            <TableHead class="py-3 px-4 dark:text-gray-100">Nome</TableHead>
+            <TableHead class="py-3 px-4 dark:text-gray-100">Descrição</TableHead>
+            <TableHead class="py-3 px-4 text-center w-60 dark:text-gray-100">Ações</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <TableRow v-for="situation in situations" :key="situation.id" class="hover:bg-accent/30 dark:hover:bg-gray-700 transition-colors duration-200">
+            <TableCell class="py-4 px-4 text-center dark:text-gray-300">{{ situation.id }}</TableCell>
+            <TableCell class="font-medium py-4 px-4 dark:text-gray-100">{{ situation.name }}</TableCell>
+            <TableCell class="py-4 px-4 dark:text-gray-300">{{ situation.description }}</TableCell>
+            <TableCell class="flex justify-center items-center relative" @mouseleave="closeMenu(situation.id)">
+              <template v-if="!isMenuOpen[situation.id]">
+                <Button
+                  @click="toggleMenu(situation.id)"
+                  variant="ghost"
+                  class="flex h-8 w-8 p-0 text-muted-foreground hover:bg-primary hover:bg-opacity-20 rounded-full transition duration-300 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 shadow-lg"
+                >
                   <DotsHorizontalIcon class="h-4 w-4" />
                   <span class="sr-only">Abrir menu</span>
                 </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent class="w-[160px]">
-                <DropdownMenuItem>
-                  <Button variant="ghost" @click="editProjectSituation(situation)">Editar</Button>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Button variant="ghost" @click="deleteProjectSituation(situation.id)">Excluir</Button>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </TableCell>
-        </TableRow>
-      </TableBody>
-    </Table>
+              </template>
+
+              <template v-else>
+                <div class="flex space-x-3 items-center">
+                  <Button @click="editProjectSituation(situation)" class="editBtn">
+                    <svg height="0.8em" width="0.8em" viewBox="0 0 512 512">
+                      <path d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1v32c0 8.8 7.2 16 16 16h32zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z"></path>
+                    </svg>
+                  </Button>
+
+                  <Button @click="deleteProjectSituation(situation.id)" class="group relative flex h-10 w-10 flex-col items-center justify-center overflow-hidden rounded-xl border-2 border-red-800 bg-red-400 hover:bg-red-600"
+                    title="Excluir">
+                      <svg viewBox="0 0 1.625 1.625" class="absolute -top-5 fill-white delay-100 group-hover:top-3 group-hover:animate-[spin_1.4s] group-hover:duration-1000" height="10" width="10">
+                        <path d="M.471 1.024v-.52a.1.1 0 0 0-.098.098v.618c0 .054.044.098.098.098h.487a.1.1 0 0 0 .098-.099h-.39c-.107 0-.195 0-.195-.195"></path>
+                        <path d="M1.219.601h-.163A.1.1 0 0 1 .959.504V.341A.033.033 0 0 0 .926.309h-.26a.1.1 0 0 0-.098.098v.618c0 .054.044.098.098.098h.487a.1.1 0 0 0 .098-.099v-.39a.033.033 0 0 0-.032-.033"></path>
+                        <path d="m1.245.465-.15-.15a.02.02 0 0 0-.016-.006.023.023 0 0 0-.023.022v.108c0 .036.029.065.065.065h.107a.023.023 0 0 0 .023-.023.02.02 0 0 0-.007-.016"></path>
+                      </svg>
+                      <svg width="10" fill="none" viewBox="0 0 39 7" class="origin-right duration-500 group-hover:rotate-90">
+                        <line stroke-width="4" stroke="white" y2="5" x2="39" y1="5"></line>
+                        <line stroke-width="3" stroke="white" y2="1.5" x2="26.0357" y1="1.5" x1="12"></line>
+                      </svg>
+                      <svg width="10" fill="none" viewBox="0 0 33 39" class="">
+                        <mask fill="white" id="path-1-inside-1_8_19">
+                          <path d="M0 0H33V35C33 37.2091 31.2091 39 29 39H4C1.79086 39 0 37.2091 0 35V0Z"></path>
+                        </mask>
+                        <path mask="url(#path-1-inside-1_8_19)" fill="white" d="M0 0H33H0ZM37 35C37 39.4183 33.4183 43 29 43H4C-0.418278 43 -4 39.4183 -4 35H4H29H37ZM4 43C-0.418278 43 -4 39.4183 -4 35V0H4V35V43ZM37 0V35C37 39.4183 33.4183 43 29 43V35V0H37Z" ></path>
+                        <path stroke-width="4" stroke="white" d="M12 6L12 29"></path>
+                        <path stroke-width="4" stroke="white" d="M21 6V29"></path>
+                      </svg>
+                  </Button>
+                </div>
+              </template>
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
+    </div>
   </div>
 </template>
+
+<style scoped>
+  @keyframes fadeInScale {
+    0% {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  .editBtn {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    border: none;
+    background-color: rgb(93, 93, 116);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.123);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+  }
+  .editBtn::before {
+    content: "";
+    width: 200%;
+    height: 200%;
+    background-color: rgb(102, 102, 141);
+    position: absolute;
+    z-index: 1;
+    transform: scale(0);
+    transition: all 0.3s;
+    border-radius: 50%;
+    filter: blur(10px);
+  }
+  .editBtn:hover::before {
+    transform: scale(1);
+  }
+  .editBtn:hover {
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.336);
+  }
+
+  .editBtn svg {
+    height: 17px;
+    fill: white;
+    z-index: 3;
+    transition: all 0.2s;
+    transform-origin: bottom;
+  }
+  .editBtn:hover svg {
+    transform: rotate(-15deg) translateX(5px);
+  }
+  .editBtn::after {
+    content: "";
+    width: 25px;
+    height: 1.5px;
+    position: absolute;
+    bottom: 12px;
+    left: -5px;
+    background-color: white;
+    border-radius: 2px;
+    z-index: 2;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s ease-out;
+  }
+  .editBtn:hover::after {
+    transform: scaleX(1);
+    left: -5px;
+    transform-origin: right;
+  }
+</style>

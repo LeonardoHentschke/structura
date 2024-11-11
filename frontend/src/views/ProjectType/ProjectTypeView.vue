@@ -83,7 +83,7 @@ const projectTypes = computed(() => projectTypesStore.types);
       <div class="flex items-center space-x-2">
         <Dialog v-model:open="isOpen">
           <DialogTrigger as-child>
-            <Button variant="outline" @click="resetForm">Adicionar novo tipo</Button>
+            <Button @click="resetForm">Adicionar novo tipo</Button>
           </DialogTrigger>
           <DialogContent class="sm:max-w-[425px]">
             <form @submit.prevent="submitForm">

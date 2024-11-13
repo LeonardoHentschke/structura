@@ -16,6 +16,9 @@ import ProjectView from "@/views/Project/ProjectView.vue";
 import ProjectTypeView from "@/views/ProjectType/ProjectTypeView.vue"
 import ProjectSituationView from "@/views/ProjectSituation/ProjectSituationView.vue";
 
+import FinancialListView from "@/views/Financial/FinancialListView.vue";
+import FinancialView from "@/views/Financial/FinancialView.vue";
+
 import { useAuthStore } from "@/stores/auth";
 
 const router = createRouter({
@@ -42,6 +45,7 @@ const router = createRouter({
       path: "/dashboard",
       name: "dashboard",
       component: DashboardView,
+      meta: { auth: true },
     },
     {
       path: '/about',
@@ -52,6 +56,7 @@ const router = createRouter({
       path: "/clients",
       name: "clientList",
       component: ClientsListView,
+      meta: { auth: true },
     },
     {
       path: "/client/:id?",
@@ -63,6 +68,7 @@ const router = createRouter({
       path: "/projects",
       name: "projectList",
       component: ProjectListView,
+      meta: { auth: true },
     },
     {
       path: "/project/:id?",
@@ -74,11 +80,23 @@ const router = createRouter({
       path: "/project-type",
       name: "projectType",
       component: ProjectTypeView,
+      meta: { auth: true },
     },
     {
       path: "/project-situation",
       name: "projectSituation",
       component: ProjectSituationView,
+      meta: { auth: true },
+    },
+    {
+      path: "/financials",
+      name: "financialList",
+      component: FinancialListView,
+    },
+    {
+      path: "/financial/:id?",
+      name: "financial",
+      component: FinancialView,
     },
   ],
 });
@@ -88,7 +106,7 @@ router.beforeEach(async (to, from) => {
   await authStore.getUser();
 
   if (authStore.user && to.meta.guest) {
-    return { name: "home" };
+    return { name: "dashboard" };
   }
 
   if (!authStore.user && to.meta.auth) {

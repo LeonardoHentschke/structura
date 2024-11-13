@@ -41,7 +41,6 @@ export const useProjectStore = defineStore("projectStore", {
           method: "post",
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "Content-Type": "application/json",
           },
           body: JSON.stringify(formData),
         });
@@ -68,7 +67,6 @@ export const useProjectStore = defineStore("projectStore", {
           method: "put",
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "Content-Type": "application/json",
           },
           body: JSON.stringify(formData),
         });
@@ -125,7 +123,6 @@ export const useProjectStore = defineStore("projectStore", {
           method: "post",
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "Content-Type": "application/json",
           },
           body: JSON.stringify(formData),
         });

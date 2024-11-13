@@ -74,7 +74,6 @@ export const useClientsStore = defineStore("clientsStore", {
 
     /******************* Delete a client *******************/
     async deleteClient(clientId) {
-      const authStore = useAuthStore();
       const res = await fetch(`/api/clients/${clientId}`, {
         method: "delete",
         headers: {

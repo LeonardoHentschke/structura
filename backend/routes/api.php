@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\FinancialTransactionController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectSituationController;
 use App\Http\Controllers\ProjectTypeController;
@@ -16,6 +17,7 @@ Route::apiResource('projects', ProjectController::class);
 Route::apiResource('clients', ClientController::class);
 Route::resource('project-situations', ProjectSituationController::class);
 Route::resource('project-types', ProjectTypeController::class);
+Route::apiResource('financial-transactions', FinancialTransactionController::class);
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);

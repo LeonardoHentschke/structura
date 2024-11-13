@@ -34,6 +34,11 @@ const components = [
     href: '/project-situation',
     description: 'Defina suas situações de projeto',
   },
+  {
+    title: 'Financeiro',
+    href: '/financials',
+    description: 'Gerenciamento financeiro',
+  },
 ];
 
 const openProfileModal = () => {

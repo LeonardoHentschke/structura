@@ -31,13 +31,13 @@ onMounted(async () => {
 });
 
 const submitForm = async () => {
-  if (isUpdateMode.value) {
-    await financeStore.updateFinance(route.params.id, formData.value);
-  } else {
-    const response = await financeStore.createFinance(formData.value);
-    if (response.status === 201) {
-      router.push({ name: 'financials' });
-    }
+  const action = isUpdateMode.value
+    ? financeStore.updateFinance(route.params.id, formData.value)
+    : financeStore.createFinance(formData.value);
+  
+  const response = await action;
+  if (response.ok) {
+    router.push({ name: 'financialList' });
   }
 };
 

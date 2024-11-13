@@ -36,9 +36,8 @@ onMounted(financialStore.getAllFinances);
           <TableHead>ID</TableHead>
           <TableHead>Descrição</TableHead>
           <TableHead>Valor</TableHead>
-          <TableHead>Data</TableHead>
           <TableHead>Tipo</TableHead>
-          <TableHead>Categoria</TableHead>
+          <TableHead>Data</TableHead>
           <TableHead>Ações</TableHead>
         </TableRow>
       </TableHeader>
@@ -47,9 +46,8 @@ onMounted(financialStore.getAllFinances);
           <TableCell>{{ finance.id }}</TableCell>
           <TableCell>{{ finance.description }}</TableCell>
           <TableCell>{{ finance.amount }}</TableCell>
-          <TableCell>{{ finance.date }}</TableCell>
-          <TableCell>{{ finance.type }}</TableCell>
-          <TableCell>{{ finance.category }}</TableCell>
+          <TableCell>{{ finance.type === 'expense' ? 'Saída' : 'Entrada' }}</TableCell>
+          <TableCell>{{ finance.transaction_date }}</TableCell>
           <TableCell>
             <DropdownMenu>
               <DropdownMenuTrigger as-child>

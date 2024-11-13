@@ -34,7 +34,6 @@ export const useFinancialStore = defineStore("financialStore", {
 
     /******************* Create a financial transaction *******************/
     async createFinance(formData) {
-      console.log(formData);
       const res = await fetch("/api/financial-transactions", {
         method: "POST",
         headers: {
@@ -43,13 +42,11 @@ export const useFinancialStore = defineStore("financialStore", {
         body: JSON.stringify(formData),
       });
 
-      const data = await res.json();
-      
-      if (data.errors) {
-        this.errors = data.errors;
+      if (res.errors) {
+        this.errors = res.errors;
       } else {
         this.errors = {};
-        this.finances.push(data); // Atualiza a lista de finanças com a nova transação
+        return res;
       }
     },
 
@@ -73,6 +70,7 @@ export const useFinancialStore = defineStore("financialStore", {
         if (index !== -1) {
           this.finances[index] = data;
         }
+        return res;
       }
     },
 

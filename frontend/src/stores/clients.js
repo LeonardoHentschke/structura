@@ -89,5 +89,25 @@ export const useClientsStore = defineStore("clientsStore", {
         this.errors = data.errors || {};
       }
     },
+
+    /******************* Get all addresses of a client *******************/
+    async getClientAddresses(clientId) {
+      try {
+        const res = await fetch(`/api/clients/${clientId}/addresses`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+
+        if (!res.ok) {
+          throw new Error("Erro ao buscar endereços do cliente");
+        }
+
+        return await res.json(); // Espera que os endereços venham no formato de uma lista
+      } catch (error) {
+        console.error("Erro ao buscar endereços do cliente:", error);
+        return [];
+      }
+    },
   },
 });

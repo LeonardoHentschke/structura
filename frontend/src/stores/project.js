@@ -12,15 +12,33 @@ export const useProjectStore = defineStore("projectStore", {
   actions: {
     /******************* Get all projects *******************/
     async getAllProjects() {
-      const res = await fetch("/api/projects", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      const data = await res.json();
-      this.projects = data;
-      return data;
-    },
+      try {
+        const res = await fetch("/api/projects", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+    
+        if (!res.ok) {
+          const errorData = await res.json();
+          console.error("Erro ao obter projetos:", errorData);
+          this.projects = []; // Define a lista de projetos vazia em caso de erro
+          return []; // Retorna array vazio em caso de erro para uso em outras partes do código
+        }
+    
+        const projects = await res.json(); // Obtenha os dados da resposta
+    
+        // Atualize o estado dos projetos no store
+        this.projects = projects;
+    
+        // Retorne a lista de projetos para outras funções que precisem dos dados
+        return projects;
+      } catch (error) {
+        console.error("Erro ao buscar projetos:", error);
+        this.projects = []; // Define a lista de projetos vazia em caso de erro
+        return []; // Retorna array vazio em caso de erro para uso em outras partes do código
+      }
+    },    
 
     /******************* Get a single project *******************/
     async getProject(id) {
@@ -41,15 +59,20 @@ export const useProjectStore = defineStore("projectStore", {
           method: "post",
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json"
           },
           body: JSON.stringify(formData),
         });
 
         if (!res.ok) {
           const errorData = await res.json();
+          console.error("Erro ao criar o projeto:", errorData);
+          // Log para ver a mensagem de erro específica do backend
+          console.log("Erro detalhado:", errorData.errors);
           this.errors = errorData.errors || {};
           return { status: res.status, errors: this.errors };
         }
+        
 
         const data = await res.json();
         this.errors = {};
@@ -63,12 +86,14 @@ export const useProjectStore = defineStore("projectStore", {
     /******************* Update a project *******************/
     async updateProject(projectId, formData) {
       try {
+        // Certifique-se de incluir o campo 'name' em formData
         const res = await fetch(`/api/projects/${projectId}`, {
           method: "put",
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json" // Importante para que a API reconheça que o corpo da requisição é JSON
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(formData), // formData deve conter o campo 'name'
         });
 
         if (!res.ok) {
@@ -79,6 +104,7 @@ export const useProjectStore = defineStore("projectStore", {
 
         const data = await res.json();
         this.errors = {};
+        // Atualize o projeto na lista localmente
         this.projects = this.projects.map((project) =>
           project.id === projectId ? data : project
         );
@@ -101,6 +127,7 @@ export const useProjectStore = defineStore("projectStore", {
         });
 
         if (res.ok) {
+          // Atualize o estado do Pinia para remover o projeto excluído
           this.projects = this.projects.filter(
             (project) => project.id !== projectId
           );
@@ -116,43 +143,61 @@ export const useProjectStore = defineStore("projectStore", {
       }
     },
 
-    /******************* Create an address *******************/
-    async createAddress(formData) {
+    /******************* Create a project *******************/
+    async createProject(formData) {
       try {
-        const res = await fetch("/api/projects/addresses", {
+        // Verifique se todos os campos necessários estão preenchidos
+        if (!formData.name || !formData.client_id || !formData.type_id || !formData.situation_id) {
+          console.error("Formulário incompleto, verifique os campos obrigatórios");
+          return { status: 400, errors: { message: "Formulário incompleto. Por favor, preencha todos os campos obrigatórios." } };
+        }
+
+        console.log("Dados enviados para criar o projeto:", formData); // Log para verificar o conteúdo do formData
+
+        const res = await fetch("/api/projects", {
           method: "post",
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json"
           },
           body: JSON.stringify(formData),
         });
 
         if (!res.ok) {
+          // Se a resposta não estiver ok, tente obter os detalhes do erro
           const errorData = await res.json();
+          console.error("Erro ao criar o projeto:", errorData);
           this.errors = errorData.errors || {};
-          throw new Error("Erro ao criar o endereço");
+          return { status: res.status, errors: this.errors };
         }
 
         const data = await res.json();
-        return data;
+        this.errors = {};
+        return { status: res.status, data };
       } catch (error) {
-        console.error("Erro ao criar o endereço:", error);
+        console.error("Erro ao criar o projeto:", error);
         throw error;
       }
     },
 
     /******************* Get all addresses of a client *******************/
     async getClientAddresses(clientId) {
-      const res = await fetch(`/api/projects/clients/${clientId}/addresses`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      if (!res.ok) {
-        throw new Error("Erro ao buscar endereços do cliente");
+      try {
+        const res = await fetch(`/api/clients/${clientId}/addresses`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+
+        if (!res.ok) {
+          throw new Error("Erro ao buscar endereços do cliente");
+        }
+
+        return await res.json(); // Espera que os endereços venham no formato de uma lista
+      } catch (error) {
+        console.error("Erro ao buscar endereços do cliente:", error);
+        return [];
       }
-      const data = await res.json();
-      return data;
     },
   },
 });

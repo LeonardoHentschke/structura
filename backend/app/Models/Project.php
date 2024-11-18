@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Project extends Model
 {
     protected $fillable = [
+        'name',
         'client_id', 
         'address_id', 
         'situation_id', 

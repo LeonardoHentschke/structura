@@ -97,6 +97,19 @@ class ClientController extends Controller implements HasMiddleware
         return response()->json($client->load('addresses'));
     }
 
+    public function getClientAddresses($clientId)
+    {
+        $client = Client::find($clientId);
+
+        if (!$client) {
+            return response()->json(['message' => 'Cliente não encontrado'], 404);
+        }
+
+        $addresses = $client->addresses; // Supondo que o relacionamento esteja bem definido
+        return response()->json($addresses);
+    }
+
+
     public function destroy($id)
     {
         $client = Client::findOrFail($id);

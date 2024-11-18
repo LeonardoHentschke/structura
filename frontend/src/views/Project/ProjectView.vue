@@ -5,6 +5,7 @@ import { useProjectStore } from '@/stores/project';
 import { useClientsStore } from "@/stores/clients";
 import { useProjectTypesStore } from "@/stores/projectType";
 import { useProjectSituationsStore } from "@/stores/projectSituation";
+import { debounce } from "lodash";
 
 import { NumberField, NumberFieldContent, NumberFieldDecrement, NumberFieldIncrement, NumberFieldInput } from '@/components/ui/number-field';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -25,16 +26,17 @@ const projectTypes = ref([]);
 const projectSituations = ref([]);
 const loading = ref(true);
 const isUpdateMode = ref(false);
+const isNameAvailable = ref(true); // Indica se o nome está disponível ou não
+const checkingName = ref(false); // Indica se está verificando o nome no momento
 
-// Estados para abrir os modais
-const isProjectTypeModalOpen = ref(false);
-const isProjectSituationModalOpen = ref(false);
-const isAddressModalOpen = ref(false); // Novo estado para o modal de endereços
+// Cache para nomes dos projetos existentes
+const projectNamesCache = ref([]);
 
 const route = useRoute();
 const router = useRouter();
 
 const formData = ref({
+  name: '',
   client_id: '',
   address_id: '',
   type_id: '',
@@ -53,6 +55,9 @@ const projectStore = useProjectStore();
 onMounted(async () => {
   await loadInitialData();
 
+  // Carregar cache dos nomes dos projetos
+  await loadProjectNamesCache();
+
   // Se estivermos editando um projeto, buscar os dados do projeto
   if (route.params.id) {
     await fetchProject();
@@ -64,6 +69,9 @@ onMounted(async () => {
 const loadInitialData = async () => {
   loading.value = true;
 
+  // Limpar a store de projetos antes de carregar novamente
+  projectStore.projects = [];
+
   // Buscar clientes
   const fetchedClients = await clientsStore.getAllClients();
   allClients.value = fetchedClients;
@@ -72,11 +80,11 @@ const loadInitialData = async () => {
     label: client.name
   }));
 
-  // Buscar tipos de projeto
+  // Buscar tipos de projeto e situações
   await refreshProjectTypes();
-
-  // Buscar situações de projeto
   await refreshProjectSituations();
+
+  loading.value = false;
 };
 
 // Carrega um projeto existente
@@ -87,6 +95,7 @@ const fetchProject = async () => {
 
       // Atribuir dados do projeto ao formData
       formData.value = {
+        name: project.name,
         client_id: project.client_id,
         address_id: project.address_id,
         type_id: project.type_id,
@@ -106,32 +115,53 @@ const fetchProject = async () => {
   }
 };
 
-// Função para carregar endereços do cliente selecionado
-const loadClientAddresses = (clientId) => {
-  const selectedClient = allClients.value.find(client => client.id === clientId);
-  if (selectedClient) {
-    clientAddresses.value = selectedClient.addresses.map(address => ({
-      value: address.id,
-      label: `${address.street}, ${address.city}`
-    }));
+// Carregar a lista de nomes dos projetos existentes e armazenar em cache
+const loadProjectNamesCache = async () => {
+  try {
+    const projects = await projectStore.getAllProjects(); // Carrega todos os projetos
 
-    // Garantir que o endereço seja selecionado automaticamente, se houver apenas um
-    if (clientAddresses.value.length === 1) {
-      formData.value.address_id = clientAddresses.value[0].value;
+    if (projects && Array.isArray(projects)) {
+      projectNamesCache.value = projects.map(project => project.name); // Armazena apenas os nomes
+    } else {
+      console.error('A resposta da API não é um array esperado.');
+      projectNamesCache.value = []; // Garantir que o valor seja um array mesmo em caso de erro
     }
+  } catch (error) {
+    console.error('Erro ao carregar os nomes dos projetos:', error);
+    projectNamesCache.value = []; // Garantir que o valor seja um array mesmo em caso de erro
   }
 };
 
-watch(() => formData.value.client_id, (newValue) => {
-  if (newValue) {
-    loadClientAddresses(newValue);
-  } else {
-    clientAddresses.value = [];
+
+// Função para validar o nome do projeto usando o cache
+const checkProjectNameAvailability = debounce((name) => {
+  if (!name) {
+    isNameAvailable.value = true; // Não há nome para verificar, então está disponível
+    return;
   }
-}, { deep: true });
+
+  // Verifica se o nome já está presente no cache de projetos
+  checkingName.value = true; // Inicia verificação
+  isNameAvailable.value = !projectNamesCache.value.includes(name);
+  checkingName.value = false; // Finaliza verificação
+}, 500); // Aguarda 500ms após a última digitação para fazer a verificação
+
+// Assistir mudanças no campo de nome para validar em tempo real
+watch(() => formData.value.name, (newValue) => {
+  checkProjectNameAvailability(newValue);
+});
+
+watch(() => formData.value.client_id, async (newValue) => {
+  await loadClientAddresses(newValue);
+});
 
 const submitForm = async () => {
   try {
+    if (!isNameAvailable.value) {
+      alert("O nome do projeto já está em uso. Escolha um nome diferente.");
+      return;
+    }
+
     let response;
 
     if (isUpdateMode.value) {
@@ -141,6 +171,7 @@ const submitForm = async () => {
     }
 
     if (response && (response.status === 200 || response.status === 201)) {
+      await loadProjectNamesCache();
       // Redirecionar para a lista de projetos após salvar/atualizar com sucesso
       router.push({ name: 'projectList' });
     } else if (response && response.errors) {
@@ -189,6 +220,39 @@ const handleAddressSaved = async (newAddress) => {
   }
   isAddressModalOpen.value = false; // Fechar o modal após salvar
 };
+// Função para carregar endereços do cliente selecionado
+const loadClientAddresses = async (clientId) => {
+  try {
+    if (!clientId) {
+      clientAddresses.value = []; // Limpa a lista de endereços se não houver cliente selecionado
+      return;
+    }
+
+    console.log(`Buscando endereços para o cliente ${clientId}...`);
+
+    const addresses = await clientsStore.getClientAddresses(clientId); // Usa a função correta da store de clientes
+    
+    console.log("Endereços recebidos:", addresses);
+
+    // Verifica se addresses não é undefined e se é um array
+    if (addresses && Array.isArray(addresses)) {
+      clientAddresses.value = addresses.map(address => ({
+        value: address.id,
+        label: `${address.street}, ${address.city}`
+      }));
+    } else {
+      console.error("Endereços não estão no formato esperado:", addresses);
+      clientAddresses.value = []; // Caso não tenha um formato esperado, limpa
+    }
+
+    // Seleciona automaticamente o único endereço, caso haja apenas um
+    if (clientAddresses.value.length === 1) {
+      formData.value.address_id = clientAddresses.value[0].value;
+    }
+  } catch (error) {
+    console.error("Erro ao carregar endereços do cliente:", error);
+  }
+};
 </script>
 
 <template>
@@ -202,6 +266,22 @@ const handleAddressSaved = async (newAddress) => {
       <form @submit.prevent="submitForm">
         <CardContent>
           <div class="grid grid-cols-2 gap-4 w-full">
+            <!-- Campo para Nome do Projeto -->
+            <div class="flex flex-col space-y-1.5">
+              <Label for="projectName">Nome do Projeto</Label>
+              <div class="flex items-center space-x-2">
+                <input
+                  id="projectName"
+                  type="text"
+                  v-model="formData.name"
+                  class="input w-full h-10 px-3 text-sm border border-gray-300 rounded-md bg-transparent dark:bg-gray-800 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 dark:text-white"
+                  :class="{ 'border-red-500 ring-red-500 focus:ring-red-500': !isNameAvailable && !checkingName }"
+                  placeholder="Digite o nome do projeto"
+                />
+              </div>
+              <p v-if="checkingName" class="text-yellow-500 text-xs mt-1">Verificando disponibilidade do nome...</p>
+              <p v-if="!isNameAvailable && !checkingName" class="text-red-500 text-xs mt-1">Nome do projeto já em uso.</p>
+            </div>
             <div class="flex flex-col space-y-1.5">
               <Label for="client">Cliente</Label>
               <InputSelector v-if="!loading" :options="clients" v-model="formData.client_id" />
@@ -301,7 +381,7 @@ const handleAddressSaved = async (newAddress) => {
         </CardContent>
         <CardFooter>
           <div class="flex justify-end">
-            <Button>Salvar</Button>
+            <Button :disabled="!isNameAvailable || loading">Salvar</Button>
           </div>
         </CardFooter>
       </form>

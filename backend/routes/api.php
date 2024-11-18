@@ -18,6 +18,8 @@ Route::apiResource('clients', ClientController::class);
 Route::resource('project-situations', ProjectSituationController::class);
 Route::resource('project-types', ProjectTypeController::class);
 Route::apiResource('financial-transactions', FinancialTransactionController::class);
+Route::get('projects', [ProjectController::class, 'index']);
+
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -25,3 +27,4 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 Route::middleware('auth:sanctum')->put('/user', [AuthController::class, 'update']);
 Route::middleware('auth:sanctum')->get('/projects/has', [ProjectController::class, 'hasProjects']);
+Route::get('/clients/{clientId}/addresses', [ClientController::class, 'getClientAddresses']);

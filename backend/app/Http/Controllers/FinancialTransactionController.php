@@ -17,42 +17,49 @@ class FinancialTransactionController extends Controller implements HasMiddleware
     }
 
     // Listar todas as movimentações financeiras
-    public function index()
+    public function index(Request $request)
     {
-        $transactions = FinancialTransaction::all();
-        return response()->json($transactions);
-    }
+        // Permitir filtrar por projeto
+        $query = FinancialTransaction::with('project'); // Carregar também o projeto relacionado
 
-    // Exibir uma movimentação financeira específica
-    public function show($id)
-    {
-        $transaction = FinancialTransaction::findOrFail($id);
-        return response()->json($transaction);
+        if ($request->filled('project_id')) {
+            $query->where('project_id', $request->input('project_id'));
+        }
+
+        $transactions = $query->get();
+        return response()->json($transactions);
     }
 
     // Criar uma nova movimentação financeira
     public function store(Request $request)
     {
-        $user = $request->user();
-        if (!$user) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+        try {
+            $user = $request->user();
+            if (!$user) {
+                return response()->json(['message' => 'Unauthorized'], 401);
+            }
+
+            $request->validate([
+                'description' => 'required|string|max:255',
+                'amount' => 'required|numeric',
+                'type' => 'required|in:income,expense',
+                'transaction_date' => 'required|date',
+                'project_id' => 'required|exists:projects,id',
+            ]);
+
+            $transaction = FinancialTransaction::create(array_merge(
+                $request->all(),
+                ['user_id' => $user->id]
+            ));
+
+            return response()->json($transaction, 201);
+        } catch (\Exception $e) {
+            // Log para ajudar na depuração do backend
+            \Log::error("Erro ao criar transação financeira: " . $e->getMessage());
+            return response()->json(['message' => 'Erro ao criar transação financeira', 'error' => $e->getMessage()], 500);
         }
-
-        $request->validate([
-            'description' => 'required|string|max:255',
-            'amount' => 'required|numeric',
-            'type' => 'required|in:income,expense',
-            'transaction_date' => 'required|date',
-        ]);
-
-        // Adicionar o ID do usuário autenticado à criação da transação
-        $transaction = FinancialTransaction::create(array_merge(
-            $request->all(),
-            ['user_id' => $user->id]
-        ));
-
-        return response()->json($transaction, 201);
     }
+
 
     // Atualizar uma movimentação financeira existente
     public function update(Request $request, $id)

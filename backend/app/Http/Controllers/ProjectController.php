@@ -31,13 +31,14 @@ class ProjectController extends Controller implements HasMiddleware
 
         // Validação dos campos
         $validated = $request->validate([
+            'name' => 'required|string|unique:projects,name',
             'client_id' => 'required|exists:clients,id',
             'address_id' => 'required|exists:addresses,id',
             'situation_id' => 'required|exists:project_situations,id',
             'type_id' => 'required|exists:project_types,id',
             'mcmv' => 'required|boolean',
-            'square_meters' => 'required|numeric',
             'price' => 'required|numeric',
+            'square_meters' => 'required|numeric',
         ]);
 
         // Garantir que `mcmv` é booleano
@@ -55,7 +56,7 @@ class ProjectController extends Controller implements HasMiddleware
 
     public function show($id)
     {
-        $project = Project::with(['client', 'address', 'situation', 'type', 'createdBy', 'updatedBy'])->findOrFail($id);
+        $project = Project::with(['name', 'client', 'address', 'situation', 'type', 'createdBy', 'updatedBy'])->findOrFail($id);
         return response()->json($project);
     }
 
@@ -67,6 +68,7 @@ class ProjectController extends Controller implements HasMiddleware
         }
 
         $validated = $request->validate([
+            'name' => 'sometimes|required|string|max:255|unique:projects,name' . $id,
             'client_id' => 'exists:clients,id',
             'address_id' => 'exists:addresses,id',
             'situation_id' => 'exists:project_situations,id',

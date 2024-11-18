@@ -9,8 +9,13 @@ export const useFinancialStore = defineStore("financialStore", {
   }),
   actions: {
     /******************* Get all financial transactions *******************/
-    async getAllFinances() {
-      const res = await fetch("/api/financial-transactions", {
+    async getAllFinances(projectId = null) {
+      let url = "/api/financial-transactions";
+      if (projectId) {
+        url += `?project_id=${projectId}`;
+      }
+    
+      const res = await fetch(url, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -18,7 +23,7 @@ export const useFinancialStore = defineStore("financialStore", {
       const data = await res.json();
       this.finances = data;
       return data;
-    },
+    },    
 
     /******************* Get a single financial transaction *******************/
     async getFinance(id) {
@@ -34,21 +39,30 @@ export const useFinancialStore = defineStore("financialStore", {
 
     /******************* Create a financial transaction *******************/
     async createFinance(formData) {
-      const res = await fetch("/api/financial-transactions", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify(formData),
-      });
+      try {
+        const res = await fetch("/api/financial-transactions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify(formData),
+        });
 
-      if (res.errors) {
-        this.errors = res.errors;
-      } else {
-        this.errors = {};
+        // Verificar se a resposta não foi bem-sucedida
+        if (!res.ok) {
+          const errorData = await res.json();
+          console.error("Erro ao criar transação:", errorData);
+        }
+
+        // Retornar o objeto Response
         return res;
+      } catch (error) {
+        console.error("Erro ao criar transação financeira:", error);
+        throw error;
       }
     },
+
 
     /******************* Update a financial transaction *******************/
     async updateFinance(financeId, formData) {

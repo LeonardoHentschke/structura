@@ -9,11 +9,10 @@ import { faCalendarAlt, faHome, faTrash, faEdit, faUser, faMapMarkerAlt, faFileS
 
 const projectStore = useProjectStore();
 
-const deleteProject = (id) => {
-  projectStore.deleteProject(id);
-};
-
-onMounted(projectStore.getAllProjects);
+onMounted(async () => {
+  await projectStore.getAllProjects();
+  console.log("Projetos carregados:", projectStore.projects);
+});
 </script>
 
 <template>
@@ -30,7 +29,7 @@ onMounted(projectStore.getAllProjects);
       </div>
     </div>
 
-    <div v-if="!projectStore.projects.length > 0" class="text-center text-gray-500">Nenhum projeto cadastrado ainda.</div>
+    <div v-if="projectStore.projects.length === 0" class="text-center text-gray-500">Nenhum projeto cadastrado ainda.</div>
     
     <div v-else class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
       <!-- Iterando sobre os projetos para exibir em cards -->
@@ -39,7 +38,10 @@ onMounted(projectStore.getAllProjects);
         <div class="relative mx-2 -mt-8 h-40 overflow-hidden rounded-xl bg-gradient-to-r from-yellow-500 to-yellow-600 bg-clip-border text-white shadow-lg shadow-yellow-500/40 flex items-center justify-center">
           <FontAwesomeIcon :icon="faClipboardList" class="w-10 h-10 text-white" />
           <div class="mx-4 text-lg">
-            Projeto #{{ project.id }}
+            Projeto #{{ project.id }} 
+            <div>
+              {{ project.name }}
+            </div>
           </div>
         </div>
 

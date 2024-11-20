@@ -28,3 +28,6 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 Route::middleware('auth:sanctum')->put('/user', [AuthController::class, 'update']);
 Route::middleware('auth:sanctum')->get('/projects/has', [ProjectController::class, 'hasProjects']);
 Route::get('/clients/{clientId}/addresses', [ClientController::class, 'getClientAddresses']);
+Route::post('/clients/{clientId}/addresses', [ClientController::class, 'createAddress']);
+Route::get('/clients/addresses/{addressId}/projects', [ClientController::class, 'getAddressProjects']);
+

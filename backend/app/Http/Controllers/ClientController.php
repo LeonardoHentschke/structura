@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Client;
 use Illuminate\Http\Request;
+use App\Models\Address;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class ClientController extends Controller implements HasMiddleware
 {
@@ -79,18 +82,37 @@ class ClientController extends Controller implements HasMiddleware
             'updated_by' => $user->id,
         ]));
 
-        // Atualizar endereços - vamos forçar a atualização para garantir a consistência
+        // Atualizar endereços recebidos no request
         $addresses = $request->get('addresses', []);
 
-        // Primeiro, remover todos os endereços existentes
-        $client->addresses()->delete();
+        // Obter IDs dos endereços recebidos
+        $receivedAddressIds = array_filter(array_column($addresses, 'id'));
 
-        // Agora, recriar todos os endereços recebidos no request
+        // Remover endereços que não foram incluídos na atualização e não estão vinculados a projetos
+        $client->addresses()->whereNotIn('id', $receivedAddressIds)->each(function ($address) {
+            if ($address->projects()->count() === 0) {
+                // Somente exclua o endereço se ele não estiver vinculado a nenhum projeto
+                $address->delete();
+            }
+        });
+
+        // Atualizar ou criar endereços
         foreach ($addresses as $addressData) {
-            $client->addresses()->create(array_merge($addressData, [
-                'created_by' => $user->id,
-                'updated_by' => $user->id,
-            ]));
+            if (isset($addressData['id'])) {
+                // Atualizar o endereço existente
+                $address = $client->addresses()->find($addressData['id']);
+                if ($address) {
+                    $address->update(array_merge($addressData, [
+                        'updated_by' => $user->id,
+                    ]));
+                }
+            } else {
+                // Criar um novo endereço
+                $client->addresses()->create(array_merge($addressData, [
+                    'created_by' => $user->id,
+                    'updated_by' => $user->id,
+                ]));
+            }
         }
 
         // Retornar o cliente atualizado com os novos endereços
@@ -109,6 +131,47 @@ class ClientController extends Controller implements HasMiddleware
         return response()->json($addresses);
     }
 
+    public function createAddress(Request $request, $clientId)
+    {
+        try {
+            // Validação dos dados do endereço
+            $validated = $request->validate([
+                'street' => 'required|string',
+                'number' => 'required|string',
+                'city' => 'required|string',
+                'latitude' => 'required|numeric|between:-90,90',
+                'longitude' => 'required|numeric|between:-180,180',
+            ]);
+
+            $validated['client_id'] = $clientId;
+            $validated['created_by'] = Auth::id();
+
+            // Encontrar o cliente pelo ID
+            $client = Client::findOrFail($clientId);
+
+            // Criar o endereço relacionado ao cliente
+            $address = $client->addresses()->create($validated);
+
+            return response()->json($address, 201);
+        } catch (\Exception $e) {
+            Log::error("Erro ao criar o endereço para o cliente $clientId: " . $e->getMessage());
+            return response()->json([
+                'message' => 'Erro ao criar o endereço',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getAddressProjects($addressId)
+    {
+        $address = Address::with('projects')->find($addressId);
+
+        if (!$address) {
+            return response()->json(['message' => 'Endereço não encontrado'], 404);
+        }
+
+        return response()->json($address->projects);
+    }
 
     public function destroy($id)
     {

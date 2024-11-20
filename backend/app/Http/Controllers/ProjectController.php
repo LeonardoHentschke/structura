@@ -56,7 +56,7 @@ class ProjectController extends Controller implements HasMiddleware
 
     public function show($id)
     {
-        $project = Project::with(['name', 'client', 'address', 'situation', 'type', 'createdBy', 'updatedBy'])->findOrFail($id);
+        $project = Project::with(['client', 'address', 'situation', 'type', 'createdBy', 'updatedBy'])->findOrFail($id);
         return response()->json($project);
     }
 

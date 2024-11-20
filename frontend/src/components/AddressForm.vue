@@ -1,8 +1,16 @@
 <script setup>
-import { reactive, ref, defineEmits } from "vue";
+import { reactive, ref, defineEmits, defineProps } from "vue";
 import { useProjectStore } from "@/stores/project";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+
+// Definindo os props do componente
+const props = defineProps({
+  clientId: {
+    type: Number,
+    required: true, // Certifique-se de que clientId seja sempre fornecido
+  },
+});
 
 // Emit para notificar o pai sobre o endereço salvo
 const emit = defineEmits(['saved']);
@@ -37,8 +45,16 @@ const submitForm = async () => {
   isSubmitting.value = true;
 
   try {
-    // Adiciona o endereço ao projeto (não é persistido de imediato no backend)
-    emit('saved', { ...formData });
+    // Verifique se o clientId foi passado corretamente
+    if (!props.clientId) {
+      throw new Error("Cliente não foi selecionado.");
+    }
+
+    // Crie o endereço usando o store e o clientId recebido por props
+    const newAddress = await projectStore.createAddress(props.clientId, formData);
+
+    // Emit para notificar o pai sobre o novo endereço criado
+    emit('saved', newAddress);
   } catch (error) {
     console.error("Erro ao criar o endereço:", error);
   } finally {

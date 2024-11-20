@@ -90,7 +90,7 @@ export const useClientsStore = defineStore("clientsStore", {
       }
     },
 
-    /******************* Get all addresses of a client *******************/
+    /******************* Get all addresses of a client with project linkage check *******************/
     async getClientAddresses(clientId) {
       try {
         const res = await fetch(`/api/clients/${clientId}/addresses`, {
@@ -103,9 +103,37 @@ export const useClientsStore = defineStore("clientsStore", {
           throw new Error("Erro ao buscar endereços do cliente");
         }
 
-        return await res.json(); // Espera que os endereços venham no formato de uma lista
+        const addresses = await res.json();
+
+        // Agora, vamos verificar se cada endereço está vinculado a um projeto
+        for (let address of addresses) {
+          const projectsLinked = await this.getAddressProjects(address.id);
+          address.hasProjects = projectsLinked.length > 0; // Adiciona um campo indicando se o endereço possui projetos
+        }
+
+        return addresses;
       } catch (error) {
         console.error("Erro ao buscar endereços do cliente:", error);
+        return [];
+      }
+    },
+
+    /******************* Get all projects linked to an address *******************/
+    async getAddressProjects(addressId) {
+      try {
+        const res = await fetch(`/api/clients/addresses/${addressId}/projects`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+
+        if (!res.ok) {
+          throw new Error("Erro ao buscar projetos vinculados ao endereço");
+        }
+
+        return await res.json(); // Espera que os projetos venham no formato de uma lista
+      } catch (error) {
+        console.error("Erro ao buscar projetos vinculados ao endereço:", error);
         return [];
       }
     },

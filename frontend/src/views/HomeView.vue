@@ -27,8 +27,9 @@
 
       <!-- Conteúdo do Cabeçalho -->
       <div class="relative max-w-7xl mx-auto px-6 py-16 text-center z-10">
-        <h1 class="text-5xl font-bold uppercase tracking-wide text-yellow-500">Elos Arquitetura e Engenharia</h1>
-        <p class="text-xl mt-6 max-w-3xl mx-auto text-gray-200 dark:text-gray-300">
+        <h1 class="text-8xl font-bold italic uppercase tracking-wide text-yellow-500">Structura</h1>
+        <h2 class="text-5xl font-semibold tracking-wide text-yellow-300">Gestão em Engenharia</h2>
+        <p class="text-m mt-6 max-w-2x1 mx-auto text-gray-200 dark:text-gray-300">
           Construindo laços, realizando sonhos. De um sonho, criamos os elos entre nossos clientes e seus objetivos.
         </p>
       </div>
@@ -131,10 +132,7 @@ onUnmounted(() => {
     transition: transform 0.5s ease;
   }
   .blur-md {
-    filter: blur(10px);
+    filter: grayscale(100%);
     transition: filter 0.5s ease, transform 0.5s ease;
-  }
-  .group:hover .blur-md {
-    filter: blur(0);
   }
 </style>

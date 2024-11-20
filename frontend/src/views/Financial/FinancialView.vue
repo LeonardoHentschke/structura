@@ -146,9 +146,23 @@ const fetchFinanceData = async () => {
                 </NumberFieldContent>
               </NumberField>
             </div>
-            <div class="flex flex-col space-y-1.5 col-span-2">
+            <div class="flex flex-col space-y-1.5 col-span-2 relative w-40">
               <Label for="date">Data</Label>
-              <input type="date" v-model="formData.transaction_date" class="input w-full" />
+              <div class="relative">
+                <!-- Ícone do calendário com classe dinâmica para dark mode -->
+                <FontAwesomeIcon 
+                  :icon="faCalendarAlt"
+                  class="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-900"
+                />
+                
+                <!-- Input de data com espaço para o ícone -->
+                <input 
+                  type="date" 
+                  id="date"
+                  v-model="formData.transaction_date" 
+                  class="input w-full pl-10 pr-3 h-10 border border-gray-300 rounded-md bg-transparent dark:bg-background dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 dark:text-white"
+                />
+              </div>
             </div>
           </div>
         </CardContent>

@@ -76,7 +76,15 @@ const addAddress = () => {
   });
 };
 
-const removeAddress = (index) => {
+const removeAddress = async (index) => {
+  const address = formData.value.addresses[index];
+
+  if (address.hasProjects) {
+    alert('Este endereço está vinculado a um ou mais projetos e não pode ser removido.');
+    return;
+  }
+
+  // Se não houver vínculos ou se for um endereço novo ainda não salvo, remova
   formData.value.addresses.splice(index, 1);
 };
 

@@ -199,5 +199,30 @@ export const useProjectStore = defineStore("projectStore", {
         return [];
       }
     },
+    /******************* Create an address *******************/
+    async createAddress(clientId, formData) {
+      try {
+        const res = await fetch(`/api/clients/${clientId}/addresses`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(formData),
+        });
+
+        if (!res.ok) {
+          const errorData = await res.json();
+          this.errors = errorData.errors || {};
+          throw new Error("Erro ao criar o endereço");
+        }
+
+        const data = await res.json();
+        return data;
+      } catch (error) {
+        console.error("Erro ao criar o endereço:", error);
+        throw error;
+      }
+    },
   },
 });

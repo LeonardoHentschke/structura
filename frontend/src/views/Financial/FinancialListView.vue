@@ -42,12 +42,12 @@ const filterByProject = () => {
 </script>
 
 <template>
-  <div class="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
+  <div class="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex dark:bg-gray-900">
     <!-- Cabeçalho -->
     <div class="flex items-center justify-between space-y-2">
       <div>
-        <h2 class="text-2xl font-bold tracking-tight">Movimentações Financeiras</h2>
-        <p class="text-muted-foreground">Aqui está uma lista de suas movimentações financeiras!</p>
+        <h2 class="text-2xl font-bold tracking-tight text-primary dark:text-yellow-500">Movimentações Financeiras</h2>
+        <p class="text-muted-foreground text-sm tracking-wide dark:text-gray-300">Aqui está uma lista de suas movimentações financeiras!</p>
       </div>
       <!-- Filtro por Projeto e Adicionar Nova Movimentação -->
       <div class="flex items-center space-x-4">
@@ -73,26 +73,26 @@ const filterByProject = () => {
       <Table class="w-full text-left bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700">
         <TableHeader>
           <TableRow class="bg-primary dark:bg-yellow-500 text-primary-foreground">
-            <TableHead class="py-3 px-4">Projeto</TableHead>
-            <TableHead class="py-3 px-4">Descrição</TableHead>
-            <TableHead class="py-3 px-4">Valor</TableHead>
-            <TableHead class="py-3 px-4">Tipo</TableHead>
-            <TableHead class="py-3 px-4">Data</TableHead>
-            <TableHead class="py-3 px-4 text-center">Ações</TableHead>
+            <TableHead class="py-3 px-4 dark:text-gray-100">Projeto</TableHead>
+            <TableHead class="py-3 px-4 dark:text-gray-100">Descrição</TableHead>
+            <TableHead class="py-3 px-4 dark:text-gray-100">Valor</TableHead>
+            <TableHead class="py-3 px-4 dark:text-gray-100">Tipo</TableHead>
+            <TableHead class="py-3 px-4 dark:text-gray-100">Data</TableHead>
+            <TableHead class="py-3 px-4 text-center dark:text-gray-100">Ações</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           <!-- Verificar se há movimentações financeiras disponíveis -->
           <TableRow v-for="finance in filteredFinances" :key="finance.id" class="hover:bg-accent/30 dark:hover:bg-gray-700">
-            <TableCell class="py-4 px-4">{{ finance.project?.id || 'Sem Projeto' }}</TableCell>
-            <TableCell class="py-4 px-4">{{ finance.description }}</TableCell>
+            <TableCell class="py-4 px-4 dark:text-gray-300">{{ finance.project?.id || 'Sem Projeto' }}</TableCell>
+            <TableCell class="py-4 px-4 dark:text-gray-300">{{ finance.description }}</TableCell>
             <TableCell class="py-4 px-4">
               <span :class="finance.type === 'income' ? 'text-green-500' : 'text-red-500'">
                 {{ finance.type === 'income' ? '+' : '-' }} {{ finance.amount }}
               </span>
             </TableCell>
-            <TableCell class="py-4 px-4">{{ finance.type === 'expense' ? 'Saída' : 'Entrada' }}</TableCell>
-            <TableCell class="py-4 px-4">{{ finance.transaction_date }}</TableCell>
+            <TableCell class="py-4 px-4 dark:text-gray-300">{{ finance.type === 'expense' ? 'Saída' : 'Entrada' }}</TableCell>
+            <TableCell class="py-4 px-4 dark:text-gray-300">{{ finance.transaction_date }}</TableCell>
             <TableCell class="flex justify-center space-x-2 py-4">
               <router-link :to="{ name: 'financial', params: { id: finance.id } }">
                 <Button variant="ghost" class="text-blue-600">Editar</Button>

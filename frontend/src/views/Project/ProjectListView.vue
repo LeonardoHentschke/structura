@@ -73,8 +73,8 @@ const editProject = (projectId) => {
   <div class="min-h-screen flex-1 flex-col space-y-8 p-8 md:flex dark:bg-gray-900">
     <div class="flex items-center justify-between space-y-2">
       <div>
-        <h2 class="text-2xl font-bold tracking-tight">Projetos!</h2>
-        <p class="text-muted-foreground">Aqui está uma lista de seus projetos!</p>
+        <h2 class="text-2xl font-bold tracking-tight text-primary dark:text-yellow-500">Projetos!</h2>
+        <p class="text-muted-foreground text-sm tracking-wide dark:text-gray-300">Aqui está uma lista de seus projetos!</p>
       </div>
       <div class="flex items-center space-x-2">
         <Button>

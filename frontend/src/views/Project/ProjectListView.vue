@@ -77,7 +77,7 @@ const editProject = (projectId) => {
         <p class="text-muted-foreground text-sm tracking-wide dark:text-gray-300">Aqui está uma lista de seus projetos!</p>
       </div>
       <div class="flex items-center space-x-2">
-        <Button>
+        <Button class="bg-primary text-primary-foreground dark:bg-yellow-500 dark:text-gray-800 font-bold transition-colors duration-300 shadow-md hover:shadow-lg">
           <router-link :to="{ name: 'project' }">Adicionar novo projeto</router-link>
         </Button>
       </div>

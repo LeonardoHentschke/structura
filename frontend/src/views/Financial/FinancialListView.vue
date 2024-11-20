@@ -61,7 +61,7 @@ const filterByProject = () => {
           </select>
         </div>
         <router-link :to="{ name: 'financial' }">
-          <Button class="bg-primary text-primary-foreground font-bold shadow-md hover:shadow-lg transition-all">
+          <Button class="bg-primary text-primary-foreground dark:bg-yellow-500 dark:text-gray-800 font-bold transition-colors duration-300 shadow-md hover:shadow-lg">
             Adicionar Nova Movimentação
           </Button>
         </router-link>

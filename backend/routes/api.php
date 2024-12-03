@@ -6,6 +6,7 @@ use App\Http\Controllers\FinancialTransactionController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectSituationController;
 use App\Http\Controllers\ProjectTypeController;
+use App\Http\Controllers\EmployeeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -31,3 +32,8 @@ Route::get('/clients/{clientId}/addresses', [ClientController::class, 'getClient
 Route::post('/clients/{clientId}/addresses', [ClientController::class, 'createAddress']);
 Route::get('/clients/addresses/{addressId}/projects', [ClientController::class, 'getAddressProjects']);
 
+Route::apiResource('employees', EmployeeController::class);
+Route::post('employees/{id}/projects', [EmployeeController::class, 'addProject']);
+Route::get('employees/{id}/projects', [EmployeeController::class, 'listProjects']);
+Route::put('employees/{employeeId}/projects/{projectId}', [EmployeeController::class, 'updateProject']);
+Route::delete('employees/{employeeId}/projects/{projectId}', [EmployeeController::class, 'removeProject']);

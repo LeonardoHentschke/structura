@@ -55,5 +55,10 @@ class Project extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function employees()
+    {
+        return $this->belongsToMany(Employee::class, 'employees_projects');
+    }
 }
 

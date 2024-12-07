@@ -39,6 +39,11 @@ const components = [
     href: '/financials',
     description: 'Gerenciamento financeiro',
   },
+  {
+    title: 'Funcionários',
+    href: '/employees',
+    description: 'Gerencie seus funcionários',
+  },
 ];
 
 const openProfileModal = () => {

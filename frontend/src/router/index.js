@@ -19,6 +19,9 @@ import ProjectSituationView from "@/views/ProjectSituation/ProjectSituationView.
 import FinancialListView from "@/views/Financial/FinancialListView.vue";
 import FinancialView from "@/views/Financial/FinancialView.vue";
 
+import EmployeesListView from "@/views/Employees/EmployeesListView.vue";
+import EmployeeFormView from "@/views/Employees/EmployeeFormView.vue";
+
 import { useAuthStore } from "@/stores/auth";
 
 const router = createRouter({
@@ -97,6 +100,21 @@ const router = createRouter({
       path: "/financial/:id?",
       name: "financial",
       component: FinancialView,
+    },
+    {
+      path: "/employees",
+      name: "employeeList",
+      component: EmployeesListView,
+    },
+    {
+      path: "/employees/new",
+      name: "employeeCreate",
+      component: EmployeeFormView,
+    },
+    {
+      path: "/employees/edit/:id",
+      name: "employeeEdit",
+      component: EmployeeFormView,
     },
   ],
 });

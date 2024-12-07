@@ -42,7 +42,7 @@ const filterByProject = () => {
 </script>
 
 <template>
-  <div class="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex dark:bg-gray-900">
+  <div class="min-h-screen flex-1 flex-col space-y-8 p-8 md:flex dark:bg-gray-900">
     <!-- Cabeçalho -->
     <div class="flex items-center justify-between space-y-2">
       <div>

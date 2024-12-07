@@ -85,7 +85,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex dark:bg-gray-900">
+  <div class="min-h-screen flex-1 flex-col space-y-8 p-8 md:flex dark:bg-gray-900">
     <div class="flex items-center justify-between space-y-2">
       <div>
         <h2 class="text-3xl font-extrabold tracking-tighter text-primary dark:text-yellow-500">Seus tipos de projeto</h2>

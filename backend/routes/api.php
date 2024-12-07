@@ -28,17 +28,36 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 Route::middleware('auth:sanctum')->put('/user', [AuthController::class, 'update']);
 Route::middleware('auth:sanctum')->get('/projects/has', [ProjectController::class, 'hasProjects']);
-Route::get('/clients/{clientId}/addresses', [ClientController::class, 'getClientAddresses']);
-Route::post('/clients/{clientId}/addresses', [ClientController::class, 'createAddress']);
-Route::get('/clients/addresses/{addressId}/projects', [ClientController::class, 'getAddressProjects']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('clients', ClientController::class);
 
-Route::apiResource('employees', EmployeeController::class);
-Route::post('employees/{id}/projects', [EmployeeController::class, 'addProject']);
-Route::get('employees/{id}/projects', [EmployeeController::class, 'listProjects']);
-Route::put('employees/{employeeId}/projects/{projectId}', [EmployeeController::class, 'updateProject']);
-Route::delete('employees/{employeeId}/projects/{projectId}', [EmployeeController::class, 'removeProject']);
+    // Rotas para gerenciar endereços de clientes
+    Route::get('/clients/{clientId}/addresses', [ClientController::class, 'getClientAddresses']);
+    Route::post('/clients/{clientId}/addresses', [ClientController::class, 'createAddress']);
+    Route::get('/clients/addresses/{addressId}/projects', [ClientController::class, 'getAddressProjects']);
+});
 
-Route::middleware('auth:sanctum')->post('/projects/{id}/responsible', [ProjectController::class, 'addResponsible']);
-Route::middleware('auth:sanctum')->put('/projects/{id}/responsible', [ProjectController::class, 'updateResponsible']);
-Route::middleware('auth:sanctum')->delete('/projects/{id}/responsible', [ProjectController::class, 'deleteResponsible']);
-Route::middleware('auth:sanctum')->get('/projects/{id}/responsible', [ProjectController::class, 'getResponsible']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('employees', EmployeeController::class);
+
+    // Rotas para gerenciar projetos de funcionários
+    Route::post('employees/{id}/projects', [EmployeeController::class, 'addProject']);
+    Route::get('employees/{id}/projects', [EmployeeController::class, 'listProjects']);
+    Route::put('employees/{employeeId}/projects/{projectId}', [EmployeeController::class, 'updateProject']);
+    Route::delete('employees/{employeeId}/projects/{projectId}', [EmployeeController::class, 'removeProject']);
+});
+
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('projects', ProjectController::class);
+    
+    // Rotas específicas para responsáveis por projetos
+    Route::post('/projects/{id}/responsible', [ProjectController::class, 'addResponsible']);
+    Route::put('/projects/{id}/responsible', [ProjectController::class, 'updateResponsible']);
+    Route::delete('/projects/{id}/responsible', [ProjectController::class, 'deleteResponsible']);
+    Route::get('/projects/{id}/responsible', [ProjectController::class, 'getResponsible']);
+    
+    // Verifica se o usuário possui projetos
+    Route::get('/projects/has', [ProjectController::class, 'hasProjects']);
+});
+

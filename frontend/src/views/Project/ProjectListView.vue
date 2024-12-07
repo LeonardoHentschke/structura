@@ -137,6 +137,10 @@ const editProject = (projectId) => {
               <FontAwesomeIcon :icon="faHome" class="w-5 h-5 text-yellow-500" />
               <p><strong>MCMV:</strong> {{ project.mcmv ? "Sim" : "Não" }}</p>
             </div>
+            <div class="flex items-center space-x-2">
+              <FontAwesomeIcon :icon="faUser" class="w-5 h-5 text-yellow-500" />
+              <p><strong>Responsável:</strong> {{ project.responsible?.name || 'Não atribuído' }}</p>
+            </div>
           </div>
 
           <!-- Mapa do Projeto -->

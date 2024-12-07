@@ -224,5 +224,27 @@ export const useProjectStore = defineStore("projectStore", {
         throw error;
       }
     },
+    /******************* Get all employees *******************/
+    async getAllEmployees() {
+      try {
+        const res = await fetch("/api/employees", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+
+        if (!res.ok) {
+          const errorData = await res.json();
+          console.error("Erro ao obter funcionários:", errorData);
+          return []; // Retorna uma lista vazia em caso de erro
+        }
+
+        const employees = await res.json(); // Obtenha os dados da resposta
+        return employees; // Retorna a lista de funcionários para uso em outras partes do código
+      } catch (error) {
+        console.error("Erro ao buscar funcionários:", error);
+        return []; // Retorna uma lista vazia em caso de erro
+      }
+    },
   },
 });

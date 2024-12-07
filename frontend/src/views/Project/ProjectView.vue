@@ -31,6 +31,7 @@ const checkingName = ref(false); // Indica se está verificando o nome no moment
 
 // Cache para nomes dos projetos existentes
 const projectNamesCache = ref([]);
+const employees = ref([]); 
 
 const route = useRoute();
 const router = useRouter();
@@ -44,6 +45,7 @@ const formData = ref({
   mcmv: false,
   price: 5000,
   square_meters: 50,
+  responsible_id: '',
 });
 
 // Instâncias das stores
@@ -84,6 +86,13 @@ const loadInitialData = async () => {
   // Buscar tipos de projeto e situações
   await refreshProjectTypes();
   await refreshProjectSituations();
+
+  // Buscar funcionários
+  const fetchedEmployees = await projectStore.getAllEmployees(); // Você precisa ter este método na store
+  employees.value = fetchedEmployees.map(employee => ({
+    value: employee.id,
+    label: employee.name,
+  }));
 };
 
 // Carrega um projeto existente
@@ -341,6 +350,15 @@ const handleAddressSaved = async (newAddress) => {
                   </DialogContent>
                 </Dialog>
               </div>
+            </div>
+            <div class="flex flex-col space-y-1.5">
+              <Label for="responsible">Responsável</Label>
+              <InputSelector
+                v-if="!loading"
+                :options="employees"
+                v-model="formData.responsible_id"
+                placeholder="Selecione o responsável"
+              />
             </div>
             <div class="flex items-center space-x-2 col-span-2">
               <input type="checkbox" id="mcmv-switch" :checked="formData.mcmv" @change="handleMcmvChange" />

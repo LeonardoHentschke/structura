@@ -112,4 +112,64 @@ class ProjectController extends Controller implements HasMiddleware
         $project->delete();
         return response()->json(['message' => 'Project deleted successfully']);
     }
+
+    //Add um funcionário responsável por um projeto
+    public function addResponsible(Request $request, $id)
+    {
+        $user = $request->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $validated = $request->validate([
+            'responsible_id' => 'required|exists:employees,id',
+        ]);
+
+        $project = Project::findOrFail($id);
+        $project->responsible_id = $validated['responsible_id'];
+        $project->save();
+
+        return response()->json(['message' => 'Responsible added successfully']);
+    }
+
+    //Edita um funcionário responsável por um projeto
+    public function updateResponsible(Request $request, $id)
+    {
+        $user = $request->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $validated = $request->validate([
+            'responsible_id' => 'required|exists:employees,id',
+        ]);
+
+        $project = Project::findOrFail($id);
+        $project->responsible_id = $validated['responsible_id'];
+        $project->save();
+
+        return response()->json(['message' => 'Responsible updated successfully']);
+    }
+
+    //Remove um funcionário responsável por um projeto
+    public function deleteResponsible(Request $request, $id)
+    {
+        $user = $request->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $project = Project::findOrFail($id);
+        $project->responsible_id = null;
+        $project->save();
+
+        return response()->json(['message' => 'Responsible removed successfully']);
+    }
+
+    //Busca o funcionário responsável pelo projeto
+    public function getResponsible(Request $request, $id)
+    {
+        $project = Project::with('responsible')->findOrFail($id);
+        return response()->json($project->responsible);
+    }
 }

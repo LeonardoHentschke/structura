@@ -37,3 +37,8 @@ Route::post('employees/{id}/projects', [EmployeeController::class, 'addProject']
 Route::get('employees/{id}/projects', [EmployeeController::class, 'listProjects']);
 Route::put('employees/{employeeId}/projects/{projectId}', [EmployeeController::class, 'updateProject']);
 Route::delete('employees/{employeeId}/projects/{projectId}', [EmployeeController::class, 'removeProject']);
+
+Route::middleware('auth:sanctum')->post('/projects/{id}/responsible', [ProjectController::class, 'addResponsible']);
+Route::middleware('auth:sanctum')->put('/projects/{id}/responsible', [ProjectController::class, 'updateResponsible']);
+Route::middleware('auth:sanctum')->delete('/projects/{id}/responsible', [ProjectController::class, 'deleteResponsible']);
+Route::middleware('auth:sanctum')->get('/projects/{id}/responsible', [ProjectController::class, 'getResponsible']);

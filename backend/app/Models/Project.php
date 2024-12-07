@@ -19,6 +19,7 @@ class Project extends Model
         'square_meters', 
         'price',
         'name',
+        'responsible_id'
     ];
 
     public function client()
@@ -59,6 +60,11 @@ class Project extends Model
     public function employees()
     {
         return $this->belongsToMany(Employee::class, 'employees_projects');
+    }
+
+    public function responsible()
+    {
+        return $this->belongsTo(Employee::class, 'responsible_id');
     }
 }
 

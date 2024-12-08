@@ -55,9 +55,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/projects/{id}/responsible', [ProjectController::class, 'addResponsible']);
     Route::put('/projects/{id}/responsible', [ProjectController::class, 'updateResponsible']);
     Route::delete('/projects/{id}/responsible', [ProjectController::class, 'deleteResponsible']);
-    Route::get('/projects/{id}/responsible', [ProjectController::class, 'getResponsible']);
-    
+    Route::get('/projects/{id}/responsible', [ProjectController::class, 'getResponsible']);    
     // Verifica se o usuário possui projetos
     Route::get('/projects/has', [ProjectController::class, 'hasProjects']);
 });
 
+Route::get('/projects/{projectId}/financial-movements', [FinancialTransactionController::class, 'getTransactionsByProject'])
+    ->middleware('auth:sanctum');

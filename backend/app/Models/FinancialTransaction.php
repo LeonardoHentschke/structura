@@ -26,4 +26,8 @@ class FinancialTransaction extends Model
     {
         return $this->belongsTo(Project::class);
     }
+    public function financialTransactions()
+    {
+        return $this->hasMany(FinancialTransaction::class);
+    }
 }

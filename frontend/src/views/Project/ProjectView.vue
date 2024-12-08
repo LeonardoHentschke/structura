@@ -88,7 +88,7 @@ const loadInitialData = async () => {
   await refreshProjectSituations();
 
   // Buscar funcionários
-  const fetchedEmployees = await projectStore.getAllEmployees(); // Você precisa ter este método na store
+  const fetchedEmployees = await projectStore.getAllEmployees();
   employees.value = fetchedEmployees.map(employee => ({
     value: employee.id,
     label: employee.name,
@@ -109,9 +109,10 @@ const fetchProject = async () => {
           address_id: project.address_id,
           type_id: project.type_id,
           situation_id: project.situation_id,
-          mcmv: !!project.mcmv, // Garantir que `mcmv` seja booleano
+          mcmv: !!project.mcmv,
           price: project.price,
           square_meters: project.square_meters,
+          responsible_id: project.responsible_id,
         };
 
         isUpdateMode.value = true;

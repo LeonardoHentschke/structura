@@ -105,5 +105,28 @@ export const useFinancialStore = defineStore("financialStore", {
         this.errors = data.errors || {};
       }
     },
+
+    /******************* Get financial movements by project *******************/
+    async getFinancialMovementsByProject(projectId) {
+      try {
+        const res = await fetch(`/api/projects/${projectId}/financial-movements`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+
+        if (!res.ok) {
+          const errorData = await res.json();
+          console.error("Erro ao buscar movimentações financeiras:", errorData);
+          return [];
+        }
+
+        const data = await res.json();
+        return data;
+      } catch (error) {
+        console.error("Erro ao buscar movimentações financeiras:", error);
+        return [];
+      }
+    },
   },
 });

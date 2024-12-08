@@ -125,23 +125,30 @@ export const useProjectStore = defineStore("projectStore", {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
-
+    
         if (res.ok) {
           // Atualize o estado do Pinia para remover o projeto excluído
           this.projects = this.projects.filter(
             (project) => project.id !== projectId
           );
-          return { status: res.status };
+          return { status: res.status, message: "Projeto excluído com sucesso!" };
         } else {
           const data = await res.json();
           this.errors = data.errors || {};
-          return { status: res.status, errors: this.errors };
+          return {
+            status: res.status,
+            errors: this.errors,
+            message: "Não foi possível excluir o projeto.",
+          };
         }
       } catch (error) {
         console.error("Erro ao excluir o projeto:", error);
-        throw error;
+        throw {
+          status: 500,
+          message: "Erro interno ao tentar excluir o projeto.",
+        };
       }
-    },
+    },    
 
     /******************* Create a project *******************/
     async createProject(formData) {

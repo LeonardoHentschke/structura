@@ -95,4 +95,20 @@ class FinancialTransactionController extends Controller implements HasMiddleware
 
         return response()->json(['message' => 'Transaction deleted successfully']);
     }
+
+    // Listar todas as movimentações financeiras de um projeto específico
+    public function getTransactionsByProject($projectId)
+    {
+        try {
+            // Filtra as transações financeiras pelo ID do projeto
+            $transactions = FinancialTransaction::where('project_id', $projectId)
+                ->orderBy('transaction_date', 'desc') // Ordena por data de transação, do mais recente para o mais antigo
+                ->get(['id', 'description', 'amount', 'type', 'transaction_date']);
+
+            return response()->json($transactions, 200);
+        } catch (\Exception $e) {
+            \Log::error("Erro ao buscar transações financeiras: " . $e->getMessage());
+            return response()->json(['message' => 'Erro ao buscar transações financeiras', 'error' => $e->getMessage()], 500);
+        }
+    }
 }

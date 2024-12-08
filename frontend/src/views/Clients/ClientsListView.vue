@@ -53,6 +53,11 @@ const openDeleteModal = async (clientId) => {
   await checkProjects(clientId); // Aguarde a verificação de projetos vinculados
   isModalOpen.value = true; // Abre o modal após verificar
 };
+// Fecha o modal sem excluir
+const closeDeleteModal = () => {
+  isDeleteModalOpen.value = false;
+  selectedProjectId.value = null;
+};
 
 onMounted(clientsStore.getAllClients);
 </script>
@@ -164,8 +169,11 @@ onMounted(clientsStore.getAllClients);
           </p>
         </div>
         <div class="flex justify-center pt-5 pb-6 px-6 text-right bg-gray-900 -mb-2">
-          <button @click="deactivateClient" class="inline-block w-full sm:w-auto py-3 px-5 mb-2 mr-4 text-center font-semibold leading-6 text-gray-200 bg-gray-500 hover:bg-gray-400 rounded-lg transition duration-200">
-            Desativar
+          <button
+            @click="closeDeleteModal"
+            class="inline-block w-full sm:w-auto py-3 px-5 mb-2 mr-4 text-center font-semibold leading-6 text-gray-200 bg-gray-500 hover:bg-gray-400 rounded-lg transition duration-200"
+          >
+            Cancelar
           </button>
           <button v-if="!hasProjects" @click="deleteClient" class="inline-block w-full sm:w-auto py-3 px-5 mb-2 text-center font-semibold leading-6 text-blue-50 bg-red-500 hover:bg-red-600 rounded-lg transition duration-200">
             Deletar

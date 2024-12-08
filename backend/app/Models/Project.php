@@ -66,5 +66,9 @@ class Project extends Model
     {
         return $this->belongsTo(Employee::class, 'responsible_id');
     }
+    public function financialTransactions()
+    {
+        return $this->hasMany(FinancialTransaction::class);
+    }
 }
 

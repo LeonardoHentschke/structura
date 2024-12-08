@@ -18,7 +18,7 @@ class ProjectController extends Controller implements HasMiddleware
 
     public function index()
     {
-        $projects = Project::with(['client', 'address', 'situation', 'type', 'createdBy', 'updatedBy'])->get();
+        $projects = Project::with(['client', 'address', 'situation', 'type', 'createdBy', 'updatedBy', 'responsible'])->get();
         return response()->json($projects);
     }
 
@@ -39,6 +39,7 @@ class ProjectController extends Controller implements HasMiddleware
             'mcmv' => 'required|boolean',
             'price' => 'required|numeric',
             'square_meters' => 'required|numeric',
+            'responsible_id' => 'nullable|exists:employees,id',
         ]);
 
         // Garantir que `mcmv` é booleano
@@ -56,7 +57,7 @@ class ProjectController extends Controller implements HasMiddleware
 
     public function show($id)
     {
-        $project = Project::with(['client', 'address', 'situation', 'type', 'createdBy', 'updatedBy'])->findOrFail($id);
+        $project = Project::with(['client', 'address', 'situation', 'type', 'createdBy', 'updatedBy', 'responsible'])->findOrFail($id);
         return response()->json($project);
     }
 
@@ -76,6 +77,7 @@ class ProjectController extends Controller implements HasMiddleware
             'mcmv' => 'boolean',
             'square_meters' => 'numeric',
             'price' => 'numeric',
+            'responsible_id' => 'nullable|exists:employees,id',
         ]);
 
         // Forçar a conversão de mcmv para booleano
@@ -86,6 +88,11 @@ class ProjectController extends Controller implements HasMiddleware
         $project = Project::findOrFail($id);
 
         $validated['updated_by'] = $user->id;
+
+        if (isset($validated['responsible_id'])) {
+            $project->responsible_id = $validated['responsible_id'];
+            $project->save();
+        }
 
         $project->update($validated);
 

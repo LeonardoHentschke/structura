@@ -66,7 +66,6 @@ const initializeMap = async (project) => {
 // Função chamada quando a página é montada
 onMounted(async () => {
   await projectStore.getAllProjects();
-  console.log("Projetos carregados:", projectStore.projects);
 });
 
 // Função para navegar até a página de edição de um projeto específico

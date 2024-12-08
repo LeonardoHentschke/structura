@@ -31,7 +31,8 @@ const checkingName = ref(false); // Indica se está verificando o nome no moment
 
 // Cache para nomes dos projetos existentes
 const projectNamesCache = ref([]);
-const employees = ref([]); 
+const employees = ref([]);
+const isAddressModalOpen = ref(false);
 
 const route = useRoute();
 const router = useRouter();

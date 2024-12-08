@@ -1,364 +1,168 @@
-<script setup>
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { BarChart } from '@/components/ui/chart-bar';
-import { AreaChart } from '@/components/ui/chart-area';
-import { LineChart } from '@/components/ui/chart-line';
-import { DonutChart } from '@/components/ui/chart-donut';
-
-const dataLine = [
-  {
-    'year': 1970,
-    'Export Growth Rate': 2.04,
-    'Import Growth Rate': 1.53,
-  },
-  {
-    'year': 1971,
-    'Export Growth Rate': 1.96,
-    'Import Growth Rate': 1.58,
-  },
-  {
-    'year': 1972,
-    'Export Growth Rate': 1.96,
-    'Import Growth Rate': 1.61,
-  },
-  {
-    'year': 1973,
-    'Export Growth Rate': 1.93,
-    'Import Growth Rate': 1.61,
-  },
-  {
-    'year': 1974,
-    'Export Growth Rate': 1.88,
-    'Import Growth Rate': 1.67,
-  },
-  {
-    'year': 1975,
-    'Export Growth Rate': 1.79,
-    'Import Growth Rate': 1.64,
-  },
-  {
-    'year': 1976,
-    'Export Growth Rate': 1.77,
-    'Import Growth Rate': 1.62,
-  },
-  {
-    'year': 1977,
-    'Export Growth Rate': 1.74,
-    'Import Growth Rate': 1.69,
-  },
-  {
-    'year': 1978,
-    'Export Growth Rate': 1.74,
-    'Import Growth Rate': 1.7,
-  },
-  {
-    'year': 1979,
-    'Export Growth Rate': 1.77,
-    'Import Growth Rate': 1.67,
-  },
-  {
-    'year': 1980,
-    'Export Growth Rate': 1.79,
-    'Import Growth Rate': 1.7,
-  },
-  {
-    'year': 1981,
-    'Export Growth Rate': 1.81,
-    'Import Growth Rate': 1.72,
-  },
-  {
-    'year': 1982,
-    'Export Growth Rate': 1.84,
-    'Import Growth Rate': 1.73,
-  },
-  {
-    'year': 1983,
-    'Export Growth Rate': 1.77,
-    'Import Growth Rate': 1.73,
-  },
-  {
-    'year': 1984,
-    'Export Growth Rate': 1.78,
-    'Import Growth Rate': 1.78,
-  },
-  {
-    'year': 1985,
-    'Export Growth Rate': 1.78,
-    'Import Growth Rate': 1.81,
-  },
-  {
-    'year': 1986,
-    'Export Growth Rate': 1.82,
-    'Import Growth Rate': 1.89,
-  },
-  {
-    'year': 1987,
-    'Export Growth Rate': 1.82,
-    'Import Growth Rate': 1.91,
-  },
-  {
-    'year': 1988,
-    'Export Growth Rate': 1.77,
-    'Import Growth Rate': 1.94,
-  },
-  {
-    'year': 1989,
-    'Export Growth Rate': 1.76,
-    'Import Growth Rate': 1.94,
-  },
-  {
-    'year': 1990,
-    'Export Growth Rate': 1.75,
-    'Import Growth Rate': 1.97,
-  },
-  {
-    'year': 1991,
-    'Export Growth Rate': 1.62,
-    'Import Growth Rate': 1.99,
-  },
-  {
-    'year': 1992,
-    'Export Growth Rate': 1.56,
-    'Import Growth Rate': 2.12,
-  },
-  {
-    'year': 1993,
-    'Export Growth Rate': 1.5,
-    'Import Growth Rate': 2.13,
-  },
-  {
-    'year': 1994,
-    'Export Growth Rate': 1.46,
-    'Import Growth Rate': 2.15,
-  },
-  {
-    'year': 1995,
-    'Export Growth Rate': 1.43,
-    'Import Growth Rate': 2.17,
-  },
-  {
-    'year': 1996,
-    'Export Growth Rate': 1.4,
-    'Import Growth Rate': 2.2,
-  },
-  {
-    'year': 1997,
-    'Export Growth Rate': 1.37,
-    'Import Growth Rate': 2.15,
-  },
-  {
-    'year': 1998,
-    'Export Growth Rate': 1.34,
-    'Import Growth Rate': 2.07,
-  },
-  {
-    'year': 1999,
-    'Export Growth Rate': 1.32,
-    'Import Growth Rate': 2.05,
-  },
-  {
-    'year': 2000,
-    'Export Growth Rate': 1.33,
-    'Import Growth Rate': 2.07,
-  },
-  {
-    'year': 2001,
-    'Export Growth Rate': 1.31,
-    'Import Growth Rate': 2.08,
-  },
-  {
-    'year': 2002,
-    'Export Growth Rate': 1.29,
-    'Import Growth Rate': 2.1,
-  },
-  {
-    'year': 2003,
-    'Export Growth Rate': 1.27,
-    'Import Growth Rate': 2.15,
-  },
-  {
-    'year': 2004,
-    'Export Growth Rate': 1.27,
-    'Import Growth Rate': 2.21,
-  },
-  {
-    'year': 2005,
-    'Export Growth Rate': 1.26,
-    'Import Growth Rate': 2.23,
-  },
-  {
-    'year': 2006,
-    'Export Growth Rate': 1.26,
-    'Import Growth Rate': 2.29,
-  },
-  {
-    'year': 2007,
-    'Export Growth Rate': 1.27,
-    'Import Growth Rate': 2.34,
-  },
-  {
-    'year': 2008,
-    'Export Growth Rate': 1.26,
-    'Import Growth Rate': 2.36,
-  },
-  {
-    'year': 2009,
-    'Export Growth Rate': 1.26,
-    'Import Growth Rate': 2.36,
-  },
-  {
-    'year': 2010,
-    'Export Growth Rate': 1.25,
-    'Import Growth Rate': 2.35,
-  },
-  {
-    'year': 2011,
-    'Export Growth Rate': 1.24,
-    'Import Growth Rate': 2.34,
-  },
-  {
-    'year': 2012,
-    'Export Growth Rate': 1.25,
-    'Import Growth Rate': 2.39,
-  },
-  {
-    'year': 2013,
-    'Export Growth Rate': 1.22,
-    'Import Growth Rate': 2.3,
-  },
-  {
-    'year': 2014,
-    'Export Growth Rate': 1.2,
-    'Import Growth Rate': 2.35,
-  },
-  {
-    'year': 2015,
-    'Export Growth Rate': 1.17,
-    'Import Growth Rate': 2.39,
-  },
-  {
-    'year': 2016,
-    'Export Growth Rate': 1.16,
-    'Import Growth Rate': 2.41,
-  },
-  {
-    'year': 2017,
-    'Export Growth Rate': 1.13,
-    'Import Growth Rate': 2.44,
-  },
-  {
-    'year': 2018,
-    'Export Growth Rate': 1.07,
-    'Import Growth Rate': 2.45,
-  },
-  {
-    'year': 2019,
-    'Export Growth Rate': 1.03,
-    'Import Growth Rate': 2.47,
-  },
-  {
-    'year': 2020,
-    'Export Growth Rate': 0.92,
-    'Import Growth Rate': 2.48,
-  },
-  {
-    'year': 2021,
-    'Export Growth Rate': 0.82,
-    'Import Growth Rate': 2.51,
-  },
-]
-
-const data = [
-  { name: 'Jan', total: Math.floor(Math.random() * 2000) + 500, predicted: Math.floor(Math.random() * 2000) + 500 },
-  { name: 'Feb', total: Math.floor(Math.random() * 2000) + 500, predicted: Math.floor(Math.random() * 2000) + 500 },
-  { name: 'Mar', total: Math.floor(Math.random() * 2000) + 500, predicted: Math.floor(Math.random() * 2000) + 500 },
-  { name: 'Apr', total: Math.floor(Math.random() * 2000) + 500, predicted: Math.floor(Math.random() * 2000) + 500 },
-  { name: 'May', total: Math.floor(Math.random() * 2000) + 500, predicted: Math.floor(Math.random() * 2000) + 500 },
-  { name: 'Jun', total: Math.floor(Math.random() * 2000) + 500, predicted: Math.floor(Math.random() * 2000) + 500 },
-  { name: 'Jul', total: Math.floor(Math.random() * 2000) + 500, predicted: Math.floor(Math.random() * 2000) + 500 },
-]
-
-</script>
-
 <template>
-  <main class="grid grid-cols-1 md:grid-cols-2 gap-6 justify-center items-center w-full dark:bg-gray-900 p-6" style="min-height: calc(100vh - 81px);">
-    <!-- Gráfico de Barras -->
-    <Card class="w-full dark:bg-gray-900">
-      <CardHeader>
-        <CardTitle>Gráfico de Barras</CardTitle>
-        <CardDescription>Total vs Previsão Mensal</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <BarChart
-          :data="data"
-          index="name"
-          :categories="['total', 'predicted']"
-          :y-formatter="(tick) => {
-            return typeof tick === 'number'
-              ? `$ ${new Intl.NumberFormat('us').format(tick)}`
-              : ''
-          }"
-        />
-      </CardContent>
-      <CardFooter>
-        Atualizado automaticamente
-      </CardFooter>
-    </Card>
+  <div class="min-h-screen p-8 bg-gray-100 dark:bg-gray-900">
+    <!-- Resumo Executivo -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white p-6 rounded-lg shadow-md">
+        <h3 class="text-lg font-bold">Total de Projetos</h3>
+        <p class="text-3xl font-extrabold">{{ totalProjects }}</p>
+        <p class="text-sm">Projetos cadastrados</p>
+      </div>
+      <div class="bg-gradient-to-r from-green-500 to-green-600 text-white p-6 rounded-lg shadow-md">
+        <h3 class="text-lg font-bold">Receita Total</h3>
+        <p class="text-3xl font-extrabold">R$ {{ totalIncome.toFixed(2) }}</p>
+        <p class="text-sm">Entradas financeiras</p>
+      </div>
+      <div class="bg-gradient-to-r from-red-500 to-red-600 text-white p-6 rounded-lg shadow-md">
+        <h3 class="text-lg font-bold">Despesa Total</h3>
+        <p class="text-3xl font-extrabold">R$ {{ totalExpense.toFixed(2) }}</p>
+        <p class="text-sm">Saídas financeiras</p>
+      </div>
+      <div class="bg-gradient-to-r from-gray-900 to-gray-800 text-white p-6 rounded-lg shadow-md">
+        <h3 class="text-lg font-bold">Saldo Atual</h3>
+        <p :class="{'text-green-600': balance >= 0, 'text-red-600': balance < 0}" class="text-3xl font-extrabold">
+          R$ {{ balance.toFixed(2) }}
+        </p>
+        <p class="text-sm">Receitas menos despesas</p>
+      </div>
+    </div>
 
-    <!-- Gráfico de Área -->
-    <Card class="w-full dark:bg-gray-900">
-      <CardHeader>
-        <CardTitle>Gráfico de Área</CardTitle>
-        <CardDescription>Total vs Previsão Mensal</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <AreaChart :data="data" index="name" :categories="['total', 'predicted']" />
-      </CardContent>
-      <CardFooter>
-        Atualizado automaticamente
-      </CardFooter>
-    </Card>
+    <!-- Gráficos Informativos -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <div class="bg-gray-800 p-6 rounded-lg shadow-md">
+        <h3 class="text-lg font-bold text-yellow-500 mb-4">Distribuição por Situação</h3>
+        <BarChart :data="projectSituationData" index="label" :categories="['value']" class="h-72" />
+      </div>
+      <div class="bg-gray-800 p-6 rounded-lg shadow-md">
+        <h3 class="text-lg font-bold text-yellow-500 mb-4">Distribuição por Tipo</h3>
+        <BarChart :data="projectTypeData" index="label" :categories="['value']" class="h-72" />
+      </div>
+    </div>
 
-    <!-- Gráfico de Linha -->
-    <Card class="w-full dark:bg-gray-900">
-      <CardHeader>
-        <CardTitle>Gráfico de Linha</CardTitle>
-        <CardDescription>Crescimento de Exportação vs Importação</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <LineChart
-          :data="dataLine"
-          index="year"
-          :categories="['Export Growth Rate', 'Import Growth Rate']"
-          :y-formatter="(tick, i) => {
-            return typeof tick === 'number'
-              ? `$ ${new Intl.NumberFormat('us').format(tick)}`
-              : ''
-          }"
-        />
-      </CardContent>
-      <CardFooter>
-        Atualizado automaticamente
-      </CardFooter>
-    </Card>
+    <div class="bg-gray-800 p-6 rounded-lg shadow-md mb-8">
+      <h3 class="text-lg font-bold text-yellow-500 mb-4">Movimentação Financeira Mensal</h3>
+      <LineChart :data="monthlyFinancialData" index="month" :categories="['income', 'expense']" class="h-96" />
+    </div>
 
-    <!-- Gráfico de Rosca -->
-    <Card class="w-full dark:bg-gray-900">
-      <CardHeader>
-        <CardTitle>Gráfico de Rosca</CardTitle>
-        <CardDescription>Distribuição Total</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <DonutChart
-          index="name"
-          :category="'total'"
-          :data="data"
-        />
-      </CardContent>
-      <CardFooter>
-        Atualizado automaticamente
-      </CardFooter>
-    </Card>
-  </main>
+    <!-- Mapa de Projetos -->
+    <div class="bg-gray-800 p-6 rounded-lg shadow-md">
+      <h3 class="text-lg font-bold text-yellow-500 mb-4">Mapa de Projetos</h3>
+      <div id="projects-map" class="h-96 w-full rounded-lg shadow-md"></div>
+    </div>
+  </div>
 </template>
 
+<script setup>
+import { ref, onMounted } from 'vue';
+import { useProjectStore } from '@/stores/project';
+import { useFinancialStore } from '@/stores/financial';
+import BarChart from '@/components/ui/chart-bar/BarChart.vue';
+import LineChart from '@/components/ui/chart-line/LineChart.vue';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+
+const projectStore = useProjectStore();
+const financialStore = useFinancialStore();
+const mapInstance = ref(null);
+let mapInitialized = false;
+
+const totalProjects = ref(0);
+const totalIncome = ref(0);
+const totalExpense = ref(0);
+const balance = ref(0);
+const projectSituationData = ref([]);
+const projectTypeData = ref([]);
+const monthlyFinancialData = ref([]);
+
+const initializeProjectsMap = async () => {
+  console.log("Iniciando o mapa...");
+  const mapContainer = document.getElementById("projects-map");
+
+  if (!mapContainer) {
+    console.error("Elemento do mapa não encontrado.");
+    return;
+  }
+
+  console.log("Elemento do mapa encontrado:", mapContainer);
+
+  if (mapInstance.value) {
+    console.log("Recriando o mapa existente...");
+    mapInstance.value.remove();
+  }
+
+  mapInstance.value = L.map(mapContainer).setView([-29.4661, -51.9614], 12);
+  mapInstance.value.invalidateSize(); // Força o Leaflet a recalcular o tamanho
+  console.log("Mapa configurado.");
+
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: "&copy; OpenStreetMap contributors",
+  }).on("tileerror", (error) => {
+    console.error("Erro ao carregar tiles do mapa:", error);
+  }).addTo(mapInstance.value);
+
+  projectStore.projects.forEach((project) => {
+    if (project.address?.latitude && project.address?.longitude) {
+      console.log(`Adicionando marcador para o projeto: ${project.name}`);
+      L.marker([project.address.latitude, project.address.longitude])
+        .addTo(mapInstance.value)
+        .bindPopup(
+          `<strong>${project.name}</strong><br>${project.address.street}, ${project.address.city}`
+        );
+    } else {
+      console.warn(`Coordenadas inválidas para o projeto: ${project.name}`);
+    }
+  });
+};
+
+
+
+onMounted(async () => {
+  const projects = await projectStore.getAllProjects();
+  const finances = await financialStore.getAllFinances();
+
+  totalProjects.value = projects.length;
+  totalIncome.value = finances.filter((f) => f.type === 'income').reduce((sum, f) => sum + f.amount, 0);
+  totalExpense.value = finances.filter((f) => f.type === 'expense').reduce((sum, f) => sum + f.amount, 0);
+  balance.value = totalIncome.value - totalExpense.value;
+
+  projectSituationData.value = Object.entries(
+    projects.reduce((acc, project) => {
+      acc[project.situation.name] = (acc[project.situation.name] || 0) + 1;
+      return acc;
+    }, {})
+  ).map(([label, value]) => ({ label, value }));
+
+  projectTypeData.value = Object.entries(
+    projects.reduce((acc, project) => {
+      acc[project.type.name] = (acc[project.type.name] || 0) + 1;
+      return acc;
+    }, {})
+  ).map(([label, value]) => ({ label, value }));
+
+  monthlyFinancialData.value = Object.entries(
+    finances.reduce((acc, f) => {
+      const month = new Date(f.transaction_date).toLocaleString('default', { month: 'short' });
+      acc[month] = acc[month] || { month, income: 0, expense: 0 };
+      acc[month][f.type] += f.amount;
+      return acc;
+    }, {})
+  ).map(([_, data]) => data);
+
+  initializeProjectsMap();
+});
+</script>
+
+<style scoped>
+#projects-map {
+  height: 100%; /* Altura total */
+  width: 100%;  /* Largura total */
+  min-height: 400px; /* Altura mínima */
+  position: relative; /* Necessário para renderização em layouts complexos */
+  background: #f0f0f0; /* Cor de fundo para verificar visualmente */
+}
+
+.card {
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+</style>

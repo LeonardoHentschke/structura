@@ -28,6 +28,8 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 Route::middleware('auth:sanctum')->put('/user', [AuthController::class, 'update']);
 Route::middleware('auth:sanctum')->get('/projects/has', [ProjectController::class, 'hasProjects']);
+Route::post('/refresh-token', [AuthController::class, 'refresh']);
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('clients', ClientController::class);
 

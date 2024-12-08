@@ -72,9 +72,10 @@ class EmployeeController extends Controller implements HasMiddleware
             'email' => 'sometimes|required|string|email|max:255|unique:employees,email,' . $id,
             'cpf' => 'sometimes|required|string|max:14|unique:employees,cpf,' . $id,
             'phone' => 'sometimes|required|string|max:15',
-            'updated_by' => 'required|exists:users,id',
             'demission_date' => 'nullable|date',
         ]);
+
+        $validated['updated_by'] = $user->id;
 
         $employee->update($validated);
         return response()->json($employee);

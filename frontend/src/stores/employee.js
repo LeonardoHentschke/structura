@@ -46,13 +46,24 @@ export const useEmployeeStore = defineStore("employeeStore", {
       return await res.json();
     },
     async deleteEmployee(id) {
-      const res = await fetch(`/api/employees/${id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      return res.ok;
-    },
+      try {
+        const response = await fetch(`/api/employees/${id}`, {
+          method: "DELETE",
+          headers: {
+            "Authorization": `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+        });
+    
+        if (!response.ok) {
+          throw new Error("Erro ao excluir funcionário");
+        }
+    
+        console.log("Funcionário excluído com sucesso:", id);
+      } catch (error) {
+        console.error("Erro ao excluir funcionário:", error);
+        throw error;
+      }
+    },    
   },
 });

@@ -10,6 +10,31 @@ export const useProjectStore = defineStore("projectStore", {
     };
   },
   actions: {
+    async checkProjects(clientId) {
+      try {
+        const response = await fetch(`/api/projects/has/${clientId}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+        });
+    
+        if (!response.ok) {
+          throw new Error(`Erro na requisição: ${response.statusText}`);
+        }
+    
+        const data = await response.json();
+        console.log("Resposta da API:", data); // Para depuração
+        return {
+          hasProjects: data.has_projects,
+          projects: data.projects || [],
+        };
+      } catch (error) {
+        console.error("Erro ao verificar projetos vinculados:", error.message);
+        return { hasProjects: false, projects: [] };
+      }
+    },     
     /******************* Get all projects *******************/
     async getAllProjects() {
       try {
@@ -119,36 +144,53 @@ export const useProjectStore = defineStore("projectStore", {
     /******************* Delete a project *******************/
     async deleteProject(projectId) {
       try {
+        // Log para verificar a entrada
+        console.log("Tentando excluir o projeto com ID:", projectId);
+    
         const res = await fetch(`/api/projects/${projectId}`, {
-          method: "delete",
+          method: "DELETE", // Certifique-se de que o método está em maiúsculas
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json", // Header padrão
           },
         });
     
         if (res.ok) {
+          const message = "Projeto excluído com sucesso!";
+          console.log(message);
+    
           // Atualize o estado do Pinia para remover o projeto excluído
           this.projects = this.projects.filter(
             (project) => project.id !== projectId
           );
-          return { status: res.status, message: "Projeto excluído com sucesso!" };
+    
+          return { status: res.status, message };
         } else {
-          const data = await res.json();
+          let data;
+          try {
+            data = await res.json(); // Tente obter os detalhes do erro
+          } catch {
+            data = { errors: { message: "Erro desconhecido." } };
+          }
+    
           this.errors = data.errors || {};
+          const message = data.errors?.message || "Não foi possível excluir o projeto.";
+          console.error(message);
+    
           return {
             status: res.status,
             errors: this.errors,
-            message: "Não foi possível excluir o projeto.",
+            message,
           };
         }
       } catch (error) {
-        console.error("Erro ao excluir o projeto:", error);
+        console.error("Erro ao excluir o projeto:", error.message);
         throw {
           status: 500,
           message: "Erro interno ao tentar excluir o projeto.",
         };
       }
-    },    
+    },      
 
     /******************* Create a project *******************/
     async createProject(formData) {

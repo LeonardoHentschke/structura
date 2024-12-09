@@ -146,9 +146,6 @@ onMounted(() => {
           </div>
 
           <div v-else class="flex items-center space-x-6">
-            <RouterLink :to="{ name: 'register' }">
-              <Button class="register-button text-black bg-white dark:bg-gray-900/80 dark:text-white">Registrar-se</Button>
-            </RouterLink>
             <RouterLink :to="{ name: 'login' }">
               <Button>Entrar</Button>
             </RouterLink>
@@ -159,7 +156,7 @@ onMounted(() => {
       </nav>
     </header>
 
-    <main class="flex-grow h-full">
+    <main class="flex-grow h-auto bg-white dark:bg-gray-900">
       <RouterView />
     </main>
 

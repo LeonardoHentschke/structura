@@ -28,19 +28,22 @@
 
     <!-- Gráficos Informativos -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <!-- Gráfico de Distribuição por Situação -->
       <div class="bg-gray-800 p-6 rounded-lg shadow-md">
         <h3 class="text-lg font-bold text-yellow-500 mb-4">Distribuição por Situação</h3>
-        <BarChart :data="projectSituationData" index="label" :categories="['value']" class="h-72" />
+        <div id="situation-chart" class="h-72"></div>
       </div>
+
+      <!-- Gráfico de Distribuição por Tipo -->
       <div class="bg-gray-800 p-6 rounded-lg shadow-md">
         <h3 class="text-lg font-bold text-yellow-500 mb-4">Distribuição por Tipo</h3>
-        <BarChart :data="projectTypeData" index="label" :categories="['value']" class="h-72" />
+        <div id="type-chart" class="h-72"></div>
       </div>
     </div>
 
     <div class="bg-gray-800 p-6 rounded-lg shadow-md mb-8">
       <h3 class="text-lg font-bold text-yellow-500 mb-4">Movimentação Financeira Mensal</h3>
-      <LineChart :data="monthlyFinancialData" index="month" :categories="['income', 'expense']" class="h-96" />
+      <div id="financial-chart" class="h-96"></div>
     </div>
 
     <!-- Mapa de Projetos -->
@@ -55,15 +58,12 @@
 import { ref, onMounted } from 'vue';
 import { useProjectStore } from '@/stores/project';
 import { useFinancialStore } from '@/stores/financial';
-import BarChart from '@/components/ui/chart-bar/BarChart.vue';
-import LineChart from '@/components/ui/chart-line/LineChart.vue';
+import * as echarts from 'echarts';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
 const projectStore = useProjectStore();
 const financialStore = useFinancialStore();
-const mapInstance = ref(null);
-let mapInitialized = false;
 
 const totalProjects = ref(0);
 const totalIncome = ref(0);
@@ -72,48 +72,255 @@ const balance = ref(0);
 const projectSituationData = ref([]);
 const projectTypeData = ref([]);
 const monthlyFinancialData = ref([]);
+const mapInstance = ref(null);
 
 const initializeProjectsMap = async () => {
-  console.log("Iniciando o mapa...");
   const mapContainer = document.getElementById("projects-map");
-
   if (!mapContainer) {
     console.error("Elemento do mapa não encontrado.");
     return;
   }
 
-  console.log("Elemento do mapa encontrado:", mapContainer);
-
   if (mapInstance.value) {
-    console.log("Recriando o mapa existente...");
     mapInstance.value.remove();
   }
 
   mapInstance.value = L.map(mapContainer).setView([-29.4661, -51.9614], 12);
-  mapInstance.value.invalidateSize(); // Força o Leaflet a recalcular o tamanho
-  console.log("Mapa configurado.");
 
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: "&copy; OpenStreetMap contributors",
-  }).on("tileerror", (error) => {
-    console.error("Erro ao carregar tiles do mapa:", error);
   }).addTo(mapInstance.value);
 
   projectStore.projects.forEach((project) => {
     if (project.address?.latitude && project.address?.longitude) {
-      console.log(`Adicionando marcador para o projeto: ${project.name}`);
       L.marker([project.address.latitude, project.address.longitude])
         .addTo(mapInstance.value)
         .bindPopup(
           `<strong>${project.name}</strong><br>${project.address.street}, ${project.address.city}`
         );
-    } else {
-      console.warn(`Coordenadas inválidas para o projeto: ${project.name}`);
     }
   });
 };
 
+const renderCharts = () => {
+  // Gráfico de Distribuição por Situação
+  const situationChart = echarts.init(document.getElementById('situation-chart'));
+  situationChart.setOption({
+    tooltip: {
+      trigger: 'item',
+      backgroundColor: '#1a202c',
+      textStyle: { color: '#f9fafb', fontSize: 14 },
+      borderWidth: 1,
+      borderColor: '#ffd700',
+    },
+    xAxis: {
+      type: 'category',
+      data: projectSituationData.value.map((item) => item.label),
+      axisLabel: { color: '#f9fafb', fontWeight: 'bold' },
+    },
+    yAxis: {
+      type: 'value',
+      axisLabel: { color: '#f9fafb', fontWeight: 'bold' },
+    },
+    series: [
+      {
+        data: projectSituationData.value.map((item) => item.value),
+        type: 'bar',
+        itemStyle: {
+          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: '#ffd700' },
+            { offset: 1, color: '#facc15' },
+          ]),
+        },
+        emphasis: {
+          itemStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: '#ffa500' },
+              { offset: 1, color: '#ffc107' },
+            ]),
+          },
+        },
+        barWidth: '50%',
+      },
+    ],
+  });
 
+  // Gráfico de Distribuição por Tipo
+  const typeChart = echarts.init(document.getElementById('type-chart'));
+  typeChart.setOption({
+  tooltip: {
+    trigger: 'item',
+    backgroundColor: '#1a202c',
+    textStyle: { color: '#f9fafb' },
+    borderWidth: 1,
+    borderColor: '#7fff00',
+  },
+  xAxis: {
+    type: 'category',
+    data: projectTypeData.value.map((item) => item.label),
+    axisLabel: {
+      color: '#f9fafb',
+      fontSize: 14,
+      fontWeight: 'bold',
+    },
+    axisLine: {
+      lineStyle: { color: '#32cd32' }, // Linha do eixo com cor verde.
+    },
+  },
+  yAxis: {
+    type: 'value',
+    axisLabel: {
+      color: '#f9fafb',
+      fontSize: 14,
+    },
+    axisLine: {
+      lineStyle: { color: '#32cd32' }, // Linha do eixo com cor verde.
+    },
+    splitLine: {
+      lineStyle: { color: 'rgba(255, 255, 255, 0.2)' }, // Linhas de grade discretas.
+    },
+  },
+  series: [
+    {
+      data: projectTypeData.value.map((item) => item.value),
+      type: 'bar',
+      itemStyle: {
+        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          { offset: 0, color: '#7fff00' }, // Gradiente do verde claro.
+          { offset: 1, color: '#228b22' }, // Gradiente do verde escuro.
+        ]),
+        shadowBlur: 10,
+        shadowColor: 'rgba(0, 0, 0, 0.5)',
+      },
+      barWidth: '50%',
+      emphasis: {
+        itemStyle: {
+          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: '#98fb98' }, // Verde mais claro no hover.
+            { offset: 1, color: '#32cd32' }, // Verde médio no hover.
+          ]),
+        },
+      },
+      animationEasing: 'cubicOut',
+      animationDelay: (idx) => idx * 100,
+    },
+  ],
+});
+
+
+  // Gráfico de Movimentação Financeira Mensal
+  const financialChart = echarts.init(document.getElementById('financial-chart'));
+  financialChart.setOption({
+  tooltip: {
+    trigger: 'axis',
+    backgroundColor: '#1a202c',
+    textStyle: { color: '#f9fafb' },
+    borderWidth: 1,
+    borderColor: '#34d399',
+    formatter: (params) => {
+      const tooltipContent = params.map(
+        (item) => `${item.seriesName}: R$ ${item.value.toLocaleString()}`
+      );
+      return `<div style="text-align: left; font-size: 14px;">
+                <strong>${params[0].axisValue}</strong><br/>
+                ${tooltipContent.join('<br/>')}
+              </div>`;
+    },
+  },
+  xAxis: {
+    type: 'category',
+    data: monthlyFinancialData.value.map((item) => item.month),
+    axisLabel: {
+      color: '#f9fafb',
+      fontWeight: 'bold',
+      fontSize: 14,
+    },
+    axisLine: {
+      lineStyle: { color: '#34d399' },
+    },
+    axisTick: {
+      alignWithLabel: true,
+    },
+  },
+  yAxis: {
+    type: 'value',
+    axisLabel: {
+      color: '#f9fafb',
+      fontWeight: 'bold',
+      fontSize: 14,
+    },
+    axisLine: {
+      lineStyle: { color: '#34d399' },
+    },
+    splitLine: {
+      lineStyle: { color: 'rgba(255, 255, 255, 0.2)', type: 'dashed' },
+    },
+  },
+  series: [
+    {
+      name: 'Receita',
+      data: monthlyFinancialData.value.map((item) => item.income),
+      type: 'line',
+      smooth: true,
+      lineStyle: {
+        width: 3,
+        color: '#34d399',
+      },
+      areaStyle: {
+        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          { offset: 0, color: 'rgba(52, 211, 153, 0.8)' },
+          { offset: 1, color: 'rgba(52, 211, 153, 0.2)' },
+        ]),
+      },
+      symbol: 'circle',
+      symbolSize: 8,
+      itemStyle: {
+        color: '#34d399',
+        borderColor: '#ffffff',
+        borderWidth: 2,
+      },
+      label: {
+        show: true,
+        position: 'top',
+        color: '#34d399',
+        fontWeight: 'bold',
+        formatter: (val) => `R$ ${val.data.toLocaleString()}`,
+      },
+    },
+    {
+      name: 'Despesa',
+      data: monthlyFinancialData.value.map((item) => item.expense),
+      type: 'line',
+      smooth: true,
+      lineStyle: {
+        width: 3,
+        color: '#f87171',
+      },
+      areaStyle: {
+        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          { offset: 0, color: 'rgba(248, 113, 113, 0.8)' },
+          { offset: 1, color: 'rgba(248, 113, 113, 0.2)' },
+        ]),
+      },
+      symbol: 'circle',
+      symbolSize: 8,
+      itemStyle: {
+        color: '#f87171',
+        borderColor: '#ffffff',
+        borderWidth: 2,
+      },
+      label: {
+        show: true,
+        position: 'top',
+        color: '#f87171',
+        fontWeight: 'bold',
+        formatter: (val) => `R$ ${val.data.toLocaleString()}`,
+      },
+    },
+  ],
+});
+
+};
 
 onMounted(async () => {
   const projects = await projectStore.getAllProjects();
@@ -147,22 +354,27 @@ onMounted(async () => {
     }, {})
   ).map(([_, data]) => data);
 
+  renderCharts();
   initializeProjectsMap();
 });
 </script>
 
 <style scoped>
-#projects-map {
-  height: 100%; /* Altura total */
-  width: 100%;  /* Largura total */
-  min-height: 400px; /* Altura mínima */
-  position: relative; /* Necessário para renderização em layouts complexos */
-  background: #f0f0f0; /* Cor de fundo para verificar visualmente */
+.leaflet-tile-layer {
+  filter: brightness(0.9) saturate(1.2);
 }
 
-.card {
-  border-radius: 0.75rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+.h-72 {
+  height: 18rem;
+  transition: transform 0.3s;
+}
+.h-72:hover {
+  transform: scale(1.02);
+}
+
+.text-yellow-500 {
+  font-family: 'Inter', sans-serif;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 </style>

@@ -8,6 +8,34 @@ export const useAuthStore = defineStore("authStore", {
     };
   },
   actions: {
+    async register(formData) {
+      try {
+        const res = await fetch("/api/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify(formData),
+        });
+    
+        const data = await res.json();
+    
+        if (!res.ok) {
+          if (data.message === "Usuário já existe com este email.") {
+            console.warn("Usuário já existe:", data.user);
+            return data.user; // Retorna o usuário existente
+          }
+          throw new Error(data.message || "Erro ao registrar usuário");
+        }
+    
+        console.log("Usuário registrado com sucesso:", data.user);
+        return data.user; // Retorna o usuário recém-criado
+      } catch (error) {
+        console.error("Erro ao registrar usuário:", error.message);
+        throw error;
+      }
+    },                        
     /******************* Get authenticated user *******************/
     async getUser() {
       if (localStorage.getItem("token")) {

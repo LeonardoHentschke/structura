@@ -17,7 +17,7 @@ onMounted(() => (errors.value = {}));
 </script>
 
 <template>
-  <main class="flex h-screen w-full items-center justify-center bg-gray-100 dark:bg-gray-900">
+  <main class="flex min-h-screen w-full items-center justify-center p-4 bg-gray-100 dark:bg-gray-900">
     <!-- Card de Registro -->
     <form
       class="bg-white dark:bg-zinc-900 shadow-2xl rounded-2xl overflow-hidden border-4 border-[#ffd633] w-full max-w-sm"

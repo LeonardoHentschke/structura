@@ -25,10 +25,10 @@ const isDeleteModalOpen = ref(false);
 const toggleProjectDetails = async (project) => {
   const index = expandedProjects.value.indexOf(project.id);
   if (index === -1) {
-    expandedProjects.value.push(project.id);
+    expandedProjects.value.push(project.id); // Adiciona o card atual como aberto
     await initializeMap(project);
   } else {
-    expandedProjects.value.splice(index, 1);
+    expandedProjects.value.splice(index, 1); // Fecha o card se já estiver aberto
   }
 };
 
@@ -117,7 +117,7 @@ const deleteProjectConfirmed = async () => {
 </script>
 
 <template>
-  <div class="min-h-screen flex-1 flex-col space-y-8 p-8 md:flex dark:bg-gray-900">
+  <div class="flex-1 flex-col space-y-8 p-8 md:flex dark:bg-gray-900">
     <div class="flex items-center justify-between space-y-2">
       <div>
         <h2 class="text-2xl font-bold tracking-tight text-primary dark:text-yellow-500">Projetos!</h2>
@@ -129,97 +129,96 @@ const deleteProjectConfirmed = async () => {
         </Button>
       </div>
     </div>
-
-    <div v-if="projectStore.projects.length === 0" class="text-center text-gray-500">Nenhum projeto cadastrado ainda.</div>
-    
-    <div v-else class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 w-full">
-      <div v-for="project in projectStore.projects" :key="project.id" class="card-project relative flex flex-col rounded-xl text-gray-700 shadow-md overflow-hidden transition-all duration-300 w-full bg-gradient-to-r from-yellow-500 to-yellow-600">
-        
-        <!-- Cabeçalho do Card com cor gradiente amarela -->
-        <div @click="toggleProjectDetails(project)" class="relative h-40 flex items-center justify-between px-4 cursor-pointer bg-gradient-to-r from-yellow-500 to-yellow-600 text-white shadow-lg shadow-yellow-500/40 rounded-xl">
-          <div class="flex items-center">
-            <FontAwesomeIcon :icon="faClipboardList" class="w-10 h-10 text-white" />
-            <div class="mx-4 text-lg font-bold">
-              Projeto #{{ project.id }} 
-              <div class="font-normal">
-                {{ project.name }}
+    <div class="scrollable-container p-2 min-h-screen">
+      <div v-if="projectStore.projects.length === 0" class="text-center text-gray-500">Nenhum projeto cadastrado ainda.</div>
+      <div v-else class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 w-full">
+        <div v-for="project in projectStore.projects" :key="project.id" class="relative text-gray-700">
+          <!-- Cabeçalho do Card com cor gradiente amarela -->
+          <div @click="toggleProjectDetails(project)" class="relative z-20 h-40 flex items-center justify-between px-4 cursor-pointer bg-gradient-to-r from-yellow-500 to-yellow-600 text-white rounded-xl">
+            <div class="flex items-center">
+              <FontAwesomeIcon :icon="faClipboardList" class="w-10 h-10 text-white" />
+              <div class="mx-4 text-lg font-bold">
+                Projeto #{{ project.id }} 
+                <div class="font-normal">
+                  {{ project.name }}
+                </div>
               </div>
             </div>
-          </div>
-          <FontAwesomeIcon :icon="expandedProjects.includes(project.id) ? faChevronUp : faChevronDown" class="w-6 h-6 text-white" />
-        </div>
-
-        <!-- Conteúdo do Card (expandido) -->
-        <div v-if="expandedProjects.includes(project.id)" class="p-6 bg-white rounded-b-xl">
-          <div class="block font-sans text-base font-light leading-relaxed text-inherit antialiased space-y-2">
-            <div class="flex items-center space-x-2">
-              <FontAwesomeIcon :icon="faUser" class="w-5 h-5 text-yellow-500" />
-              <p><strong>Cliente:</strong> {{ project.client.name }} (CPF: {{ project.client.cpf }})</p>
-            </div>
-            <div class="flex items-center space-x-2">
-              <FontAwesomeIcon :icon="faMapMarkerAlt" class="w-5 h-5 text-yellow-500" />
-              <p><strong>Endereço:</strong> {{ project.address.street }}, {{ project.address.city }}</p>
-            </div>
-            <div class="flex items-center space-x-2">
-              <FontAwesomeIcon :icon="faFileSignature" class="w-5 h-5 text-yellow-500" />
-              <p><strong>Situação:</strong> {{ project.situation.name }}</p>
-            </div>
-            <div class="flex items-center space-x-2">
-              <FontAwesomeIcon :icon="faClipboardList" class="w-5 h-5 text-yellow-500" />
-              <p><strong>Tipo:</strong> {{ project.type.name }}</p>
-            </div>
-            <div class="flex items-center space-x-2">
-              <FontAwesomeIcon :icon="faCalendarAlt" class="w-5 h-5 text-yellow-500" />
-              <p><strong>Entrada:</strong> {{ new Date(project.created_at).toLocaleDateString() }}</p>
-            </div>
-            <div class="flex items-center space-x-2">
-              <FontAwesomeIcon :icon="faRulerCombined" class="w-5 h-5 text-yellow-500" />
-              <p><strong>M²:</strong> {{ project.square_meters }}</p>
-            </div>
-            <div class="flex items-center space-x-2">
-              <FontAwesomeIcon :icon="faDollarSign" class="w-5 h-5 text-yellow-500" />
-              <p><strong>Valor:</strong> R$ {{ project.price }}</p>
-            </div>
-            <div class="flex items-center space-x-2">
-              <FontAwesomeIcon :icon="faHome" class="w-5 h-5 text-yellow-500" />
-              <p><strong>MCMV:</strong> {{ project.mcmv ? "Sim" : "Não" }}</p>
-            </div>
-            <div class="flex items-center space-x-2">
-              <FontAwesomeIcon :icon="faUser" class="w-5 h-5 text-yellow-500" />
-              <p><strong>Responsável:</strong> {{ project.responsible.name || 'Não atribuído' }}</p>
-            </div>
+            <FontAwesomeIcon :icon="expandedProjects.includes(project.id) ? faChevronUp : faChevronDown" class="w-6 h-6 text-white" />
           </div>
 
-          <!-- Mapa do Projeto -->
-          <div class="p-6">
-            <div :id="`project-map-${project.id}`" class="h-60 w-full rounded-lg shadow-md"></div>
-          </div>
+          <!-- Conteúdo do Card (expandido) -->
+          <div v-if="expandedProjects.includes(project.id)" :class="['absolute top-full left-0 right-0 bg-white rounded-xl z-30 p-6 shadow-lg','transition-all duration-300 ease-in-out']" style="margin-top: -2rem;">
+            <div class="block font-sans text-sm font-light leading-relaxed text-inherit antialiased space-y-2">
+              <div class="flex items-center space-x-2">
+                <FontAwesomeIcon :icon="faUser" class="w-5 h-5 text-yellow-500" />
+                <p><strong>Cliente:</strong> {{ project.client.name }} (CPF: {{ project.client.cpf }})</p>
+              </div>
+              <div class="flex items-center space-x-2">
+                <FontAwesomeIcon :icon="faMapMarkerAlt" class="w-5 h-5 text-yellow-500" />
+                <p><strong>Endereço:</strong> {{ project.address.street }}, {{ project.address.city }}</p>
+              </div>
+              <div class="flex items-center space-x-2">
+                <FontAwesomeIcon :icon="faFileSignature" class="w-5 h-5 text-yellow-500" />
+                <p><strong>Situação:</strong> {{ project.situation.name }}</p>
+              </div>
+              <div class="flex items-center space-x-2">
+                <FontAwesomeIcon :icon="faClipboardList" class="w-5 h-5 text-yellow-500" />
+                <p><strong>Tipo:</strong> {{ project.type.name }}</p>
+              </div>
+              <div class="flex items-center space-x-2">
+                <FontAwesomeIcon :icon="faCalendarAlt" class="w-5 h-5 text-yellow-500" />
+                <p><strong>Entrada:</strong> {{ new Date(project.created_at).toLocaleDateString() }}</p>
+              </div>
+              <div class="flex items-center space-x-2">
+                <FontAwesomeIcon :icon="faRulerCombined" class="w-5 h-5 text-yellow-500" />
+                <p><strong>M²:</strong> {{ project.square_meters }}</p>
+              </div>
+              <div class="flex items-center space-x-2">
+                <FontAwesomeIcon :icon="faDollarSign" class="w-5 h-5 text-yellow-500" />
+                <p><strong>Valor:</strong> R$ {{ project.price }}</p>
+              </div>
+              <div class="flex items-center space-x-2">
+                <FontAwesomeIcon :icon="faHome" class="w-5 h-5 text-yellow-500" />
+                <p><strong>MCMV:</strong> {{ project.mcmv ? "Sim" : "Não" }}</p>
+              </div>
+              <div class="flex items-center space-x-2">
+                <FontAwesomeIcon :icon="faUser" class="w-5 h-5 text-yellow-500" />
+                <p><strong>Responsável:</strong> {{ project.responsible.name || 'Não atribuído' }}</p>
+              </div>
+            </div>
 
-          <!-- Botões de Ação do Card -->
-          <div class="p-6 pt-0 flex justify-center space-x-4">
-            <button 
-              @click="editProject(project.id)" 
-              class="btn-icon bg-yellow-500 hover:shadow-yellow-500/40"
-              title="Editar">
-              <FontAwesomeIcon :icon="faEdit" class="icon" />
-              <span class="btn-text">Editar</span>
-            </button>
-            
-            <button 
-              @click="openMovementsModal(project.id)" 
-              class="btn-icon bg-blue-500 hover:shadow-blue-500/40"
-              title="Movimentações">
-              <FontAwesomeIcon :icon="faDollarSign" class="icon" />
-              <span class="btn-text">Movimentações</span>
-            </button>
-            
-            <button 
-              @click="openDeleteProjectModal(project.id)" 
-              class="btn-icon bg-red-500 hover:shadow-red-500/40"
-              title="Excluir">
-              <FontAwesomeIcon :icon="faTrash" class="icon" />
-              <span class="btn-text">Excluir</span>
-            </button>
+            <!-- Mapa do Projeto -->
+            <div class="p-6">
+              <div :id="`project-map-${project.id}`" class="h-60 w-full rounded-lg shadow-md"></div>
+            </div>
+
+            <!-- Botões de Ação do Card -->
+            <div class="p-6 pt-0 flex justify-center space-x-4">
+              <button 
+                @click="editProject(project.id)" 
+                class="btn-icon bg-yellow-500 hover:shadow-yellow-500/40"
+                title="Editar">
+                <FontAwesomeIcon :icon="faEdit" class="icon" />
+                <span class="btn-text">Editar</span>
+              </button>
+              
+              <button 
+                @click="openMovementsModal(project.id)" 
+                class="btn-icon bg-blue-500 hover:shadow-blue-500/40"
+                title="Movimentações">
+                <FontAwesomeIcon :icon="faDollarSign" class="icon" />
+                <span class="btn-text">Movimentações</span>
+              </button>
+              
+              <button 
+                @click="openDeleteProjectModal(project.id)" 
+                class="btn-icon bg-red-500 hover:shadow-red-500/40"
+                title="Excluir">
+                <FontAwesomeIcon :icon="faTrash" class="icon" />
+                <span class="btn-text">Excluir</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -314,18 +313,45 @@ const deleteProjectConfirmed = async () => {
 </template>
 
 <style scoped>
-  .cursor-pointer:hover {
-    box-shadow: 0 0 10px rgba(255, 195, 0, 0.6); /* Destaque quando o mouse está sobre o cabeçalho */
+  .card-project {
+    position: relative;
+    z-index: 1; /* Baixa prioridade para cards fechados */
   }
 
-  .card-project{
-    position: relative;
-    z-index: 30;
+  .card-project .card-header {
+    z-index: 2; /* Prioridade alta para o cabeçalho */
   }
-  .card-project:hover{
-    box-shadow: 0px 0px 15px rgba(255, 204, 0, 0.8);
-    border: 5px;
-    border-color: #ffcc00;
+
+  .card-project.expanded .card-content {
+    z-index: 10; /* Conteúdo do card expandido com prioridade máxima */
+    position: absolute;
+    top: 100%; /* Aparece logo abaixo do cabeçalho */
+    left: 0;
+    right: 0;
+    background: #fff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    margin-top: -1rem; /* Ajusta para "colar" no cabeçalho */
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .card-project .card-content .map-container {
+    height: 15rem;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .card-project:hover {
+    z-index: 2;
+  }
+
+  .card-project.expanded {
+    z-index: 10; /* Coloca o card acima dos outros */
+  }
+  .cursor-pointer:hover {
+    box-shadow: 0 0 10px rgba(255, 195, 0, 0.6); /* Destaque quando o mouse está sobre o cabeçalho */
   }
   /* Estilo base para os botões com ícones */
   .btn-icon {
@@ -380,5 +406,32 @@ const deleteProjectConfirmed = async () => {
   /* Espaçamento entre os botões */
   .p-6 .space-x-4 > *:not(:last-child) {
     margin-right: 1rem; /* Espaçamento horizontal entre os botões */
+  }
+  .scrollable-container {
+    max-height: auto;
+    overflow-y: auto;
+  }
+  .scrollable-container {
+    max-height: auto;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(253, 224, 71 , 0.9) transparent;
+  }
+
+  .scrollable-container::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .scrollable-container::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  .scrollable-container::-webkit-scrollbar-thumb {
+    background-color: rgba(253, 224, 71 , 0.9);
+    border-radius: 10px;
+    border: 2px solid transparent;
+  }
+  .input:active {
+    box-shadow: 2px 2px 15px #ffda07 inset;
   }
 </style>

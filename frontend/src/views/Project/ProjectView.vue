@@ -110,7 +110,7 @@ const fetchProject = async () => {
           address_id: project.address_id,
           type_id: project.type_id,
           situation_id: project.situation_id,
-          mcmv: !!project.mcmv,
+          mcmv: project.mcmv,
           price: project.price,
           square_meters: project.square_meters,
           responsible_id: project.responsible_id,
@@ -212,6 +212,7 @@ const submitForm = async () => {
     if (isUpdateMode.value) {
       // Atualizando um projeto existente
       response = await projectStore.updateProject(route.params.id, formData.value);
+      console.log(formData.value);
     } else {
       // Criando um novo projeto
       response = await projectStore.createProject(formData.value);
@@ -363,8 +364,8 @@ const handleAddressSaved = async (newAddress) => {
               />
             </div>
             <div class="flex items-center space-x-2 col-span-2">
-              <input type="checkbox" id="mcmv-switch" :checked="formData.mcmv" @change="handleMcmvChange" />
-              <Label for="mcmv-switch">Minha casa minha vida?</Label>
+              <input type="checkbox" id="mcmv" :checked="formData.mcmv" @change="formData.mcmv = $event.target.checked" />
+              <Label for="mcmv">Minha casa minha vida?</Label>
             </div>
             <div class="col-span-2">
               <NumberField

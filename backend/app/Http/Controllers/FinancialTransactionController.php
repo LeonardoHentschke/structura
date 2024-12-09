@@ -64,27 +64,37 @@ class FinancialTransactionController extends Controller implements HasMiddleware
     // Atualizar uma movimentação financeira existente
     public function update(Request $request, $id)
     {
-        $user = $request->user();
-        if (!$user) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+        try {
+            $user = $request->user();
+            if (!$user) {
+                return response()->json(['message' => 'Unauthorized'], 401);
+            }
+
+            $request->validate([
+                'description' => 'sometimes|string|max:255',
+                'amount' => 'sometimes|numeric',
+                'type' => 'sometimes|in:income,expense',
+                'transaction_date' => 'sometimes|date',
+            ]);
+
+            $transaction = FinancialTransaction::find($id);
+
+            if (!$transaction) {
+                return response()->json(['message' => 'Transaction not found'], 404);
+            }
+
+            // Verifica se o usuário autenticado é o proprietário da transação (opcional)
+            if ($transaction->user_id !== $user->id) {
+                return response()->json(['message' => 'Forbidden'], 403);
+            }
+
+            $transaction->update($request->only(['description', 'amount', 'type', 'transaction_date']));
+
+            return response()->json($transaction, 200);
+        } catch (\Exception $e) {
+            \Log::error("Erro ao atualizar transação financeira: " . $e->getMessage());
+            return response()->json(['message' => 'Erro ao atualizar transação financeira', 'error' => $e->getMessage()], 500);
         }
-
-        $request->validate([
-            'description' => 'sometimes|string|max:255',
-            'amount' => 'sometimes|numeric',
-            'type' => 'sometimes|in:income,expense',
-            'transaction_date' => 'sometimes|date',
-        ]);
-
-        $transaction = FinancialTransaction::findOrFail($id);
-
-        // Atualizar a transação, adicionando o ID do usuário autenticado
-        $transaction->update(array_merge(
-            $request->all(),
-            ['user_id' => $user->id]
-        ));
-
-        return response()->json($transaction);
     }
 
     // Deletar uma movimentação financeira
@@ -109,6 +119,21 @@ class FinancialTransactionController extends Controller implements HasMiddleware
         } catch (\Exception $e) {
             \Log::error("Erro ao buscar transações financeiras: " . $e->getMessage());
             return response()->json(['message' => 'Erro ao buscar transações financeiras', 'error' => $e->getMessage()], 500);
+        }
+    }
+    public function show($id)
+    {
+        try {
+            $transaction = FinancialTransaction::with('project')->find($id);
+
+            if (!$transaction) {
+                return response()->json(['message' => 'Transaction not found'], 404);
+            }
+
+            return response()->json($transaction, 200);
+        } catch (\Exception $e) {
+            \Log::error("Erro ao buscar transação: " . $e->getMessage());
+            return response()->json(['message' => 'Erro ao buscar transação', 'error' => $e->getMessage()], 500);
         }
     }
 }

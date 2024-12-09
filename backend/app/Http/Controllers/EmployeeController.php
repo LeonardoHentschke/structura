@@ -82,11 +82,16 @@ class EmployeeController extends Controller implements HasMiddleware
     }
 
     // Remove um funcionário específico
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        $employee = Employee::findOrFail($id);
-        $employee->delete();
-        return response()->json(['message' => 'Employee deleted successfully']);
+        try {
+            $employee = Employee::findOrFail($id);
+            $employee->delete();
+
+            return response()->json(['message' => 'Funcionário excluído com sucesso'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erro ao excluir funcionário', 'message' => $e->getMessage()], 500);
+        }
     }
 
     // Adiciona um projeto a um funcionário

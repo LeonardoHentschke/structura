@@ -47,6 +47,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('employees/{id}/projects', [EmployeeController::class, 'listProjects']);
     Route::put('employees/{employeeId}/projects/{projectId}', [EmployeeController::class, 'updateProject']);
     Route::delete('employees/{employeeId}/projects/{projectId}', [EmployeeController::class, 'removeProject']);
+    Route::delete('/employees/{id}', [EmployeeController::class, 'destroy']);
 });
 
 
@@ -58,9 +59,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/projects/{id}/responsible', [ProjectController::class, 'updateResponsible']);
     Route::delete('/projects/{id}/responsible', [ProjectController::class, 'deleteResponsible']);
     Route::get('/projects/{id}/responsible', [ProjectController::class, 'getResponsible']);    
-    // Verifica se o usuário possui projetos
-    Route::get('/projects/has', [ProjectController::class, 'hasProjects']);
 });
 
 Route::get('/projects/{projectId}/financial-movements', [FinancialTransactionController::class, 'getTransactionsByProject'])
     ->middleware('auth:sanctum');
+
+    Route::middleware('auth:sanctum')->get('/projects/has/{id}', [ProjectController::class, 'hasProjects']);
+
+    Route::middleware('auth:sanctum')->delete('/projects/{id}', [ProjectController::class, 'destroy']);

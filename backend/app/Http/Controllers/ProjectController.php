@@ -99,25 +99,20 @@ class ProjectController extends Controller implements HasMiddleware
         return response()->json($project);
     }
 
-    public function hasProjects(Request $request)
+    public function hasProjects(Request $request, $id)
     {
-        $user = $request->user();
-
-        if (!$user) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+        if (!$request->user()) {
+            return response()->json(['message' => 'Usuário não autenticado.'], 401);
         }
 
-        // Verifica se existem projetos criados pelo usuário
-        $hasProjects = Project::where('created_by', $user->id)->exists();
+        // $id já contém o clientId enviado pela rota
+        $projects = Project::where('client_id', $id)->get(['id', 'name']);
+        $hasProjects = $projects->isNotEmpty();
 
-        return response()->json(['has_projects' => $hasProjects]);
-    }
-
-    public function destroy($id)
-    {
-        $project = Project::findOrFail($id);
-        $project->delete();
-        return response()->json(['message' => 'Project deleted successfully']);
+        return response()->json([
+            'has_projects' => $hasProjects,
+            'projects' => $projects,
+        ]);
     }
 
     //Add um funcionário responsável por um projeto
@@ -179,4 +174,20 @@ class ProjectController extends Controller implements HasMiddleware
         $project = Project::with('responsible')->findOrFail($id);
         return response()->json($project->responsible);
     }
+    public function destroy($id)
+    {
+        $project = Project::find($id);
+
+        if (!$project) {
+            return response()->json(['message' => 'Projeto não encontrado.'], 404);
+        }
+
+        try {
+            $project->delete();
+            return response()->json(['message' => 'Projeto excluído com sucesso.'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Erro ao excluir projeto.', 'error' => $e->getMessage()], 500);
+        }
+    }
+
 }
